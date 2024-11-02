@@ -2,13 +2,15 @@
 
 import { FC, useState } from 'react';
 import Link from 'next/link';
-import { ChevronRight, ChevronDown, Hash, UserCircle2, Briefcase, Wrench, FolderGit2, GraduationCap, AtSign } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ServerHeader } from '@/components/layout/ServerHeader';
+import { cn } from '@/lib/utils';
 
 interface Channel {
   id: string;
   name: string;
   type: 'text';
-  icon: typeof Hash;
 }
 
 interface ChannelCategory {
@@ -23,30 +25,32 @@ const channelCategories: ChannelCategory[] = [
     id: 'about',
     name: 'ABOUT ME',
     channels: [
-      { id: 'intro', name: 'introduction', type: 'text', icon: UserCircle2 },
-      { id: 'contact', name: 'contact', type: 'text', icon: AtSign },
+      { id: 'intro', name: 'introduction', type: 'text' },
+      { id: 'contact', name: 'contact', type: 'text' },
     ]
   },
   {
     id: 'professional',
     name: 'PROFESSIONAL',
     channels: [
-      { id: 'exp', name: 'experience', type: 'text', icon: Briefcase },
-      { id: 'skills', name: 'skills', type: 'text', icon: Wrench },
-      { id: 'edu', name: 'education', type: 'text', icon: GraduationCap },
+      { id: 'exp', name: 'experience', type: 'text' },
+      { id: 'skills', name: 'skills', type: 'text' },
+      { id: 'edu', name: 'education', type: 'text' },
     ]
   },
   {
     id: 'portfolio',
     name: 'PORTFOLIO',
     channels: [
-      { id: 'projects', name: 'projects', type: 'text', icon: FolderGit2 },
+      { id: 'projects', name: 'projects', type: 'text' },
     ]
   }
 ];
 
 const ChannelList: FC = () => {
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
+  const pathname = usePathname();
+  const currentChannelId = pathname.split('/').pop();
 
   const toggleCategory = (categoryId: string) => {
     setCollapsedCategories(prev => {
@@ -62,13 +66,7 @@ const ChannelList: FC = () => {
 
   return (
     <div className="w-60 bg-discord-secondary flex flex-col font-sans">
-      {/* Server Name */}
-      <div className="h-12 px-4 flex items-center justify-between shadow-sm border-b border-discord-tertiary">
-        <h2 className="text-white font-semibold text-server-name">Portfolio Server</h2>
-        <button className="text-discord-text-muted hover:text-discord-text-primary">
-          <ChevronDown size={20} />
-        </button>
-      </div>
+      <ServerHeader />
       
       {/* Channels */}
       <div className="flex-1 px-2 pt-4 space-y-4 overflow-y-auto">
@@ -91,16 +89,42 @@ const ChannelList: FC = () => {
             {!collapsedCategories.has(category.id) && (
               <div className="space-y-[2px]">
                 {category.channels.map((channel) => {
-                  const Icon = channel.icon;
+                  const isActive = channel.id === currentChannelId;
                   return (
-                    <Link 
-                      key={channel.id}
-                      href={`/channel/${channel.id}`}
-                      className="flex items-center px-2 py-[6px] text-discord-text-muted hover:text-discord-text-primary hover:bg-discord-hover rounded cursor-pointer group"
-                    >
-                      <Icon size={18} className="mr-1.5 flex-shrink-0" />
-                      <span className="text-channel-name font-[500] truncate">{channel.name}</span>
-                    </Link>
+                    <div key={channel.id} className="relative group">
+                      {/* Hover Pill */}
+                      <div className="absolute -left-2 top-0 bottom-0 flex items-center">
+                        <div className={cn(
+                          "w-1 rounded-r-full bg-white transition-all duration-200 origin-center",
+                          "h-0 group-hover:h-4"
+                        )} />
+                      </div>
+                      
+                      {/* Channel Link */}
+                      <Link 
+                        href={`/channel/${channel.id}`}
+                        className={cn(
+                          "flex items-center px-2 py-[6px] rounded-md cursor-pointer",
+                          "transition-all duration-100 ease-out",
+                          isActive ? [
+                            "bg-[#404249]",  // Darker background when selected
+                            "text-white",     // Brighter text when selected
+                            "shadow-sm",      // Subtle shadow for depth
+                            "font-medium"     // Slightly bolder text
+                          ] : [
+                            "text-discord-text-muted",
+                            "hover:text-discord-text-primary",
+                            "hover:bg-[#35373C]" // Slightly darker on hover
+                          ]
+                        )}
+                      >
+                        <span className={cn(
+                          "mr-1.5 transition-colors duration-100",
+                          isActive ? "text-white" : "text-discord-channel"
+                        )}>#</span>
+                        <span className="truncate">{channel.name}</span>
+                      </Link>
+                    </div>
                   );
                 })}
               </div>
