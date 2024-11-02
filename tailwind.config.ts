@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss/types/config';
 
 const config: Config = {
   content: [
@@ -8,6 +8,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-gg-sans)', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'discord-category': ['12px', '16px'],     // Category headers
+        'discord-channel': ['16px', '20px'],      // Channel names
+        'discord-message': ['16px', '1.375rem'],  // Message text
+        'discord-username': ['16px', '20px'],     // Usernames
+        'discord-timestamp': ['12px', '16px'],    // Message timestamps
+        'discord-small': ['14px', '18px'],        // Secondary text
+      },
+      letterSpacing: {
+        'discord-category': '0.02em',
+      },
       colors: {
         discord: {
           // Main backgrounds
@@ -54,6 +68,6 @@ const config: Config = {
     },
   },
   plugins: [],
-} satisfies Config;
+};
 
 export default config; 
