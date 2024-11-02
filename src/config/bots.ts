@@ -74,5 +74,5 @@ export interface Bot {
   };
   
   export const getFullBotName = (bot: Bot): string => {
-    return `${bot.emoji} ${bot.name}`;
+    return `${bot.name}`;
   };

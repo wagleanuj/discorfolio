@@ -3,32 +3,35 @@
 import { FC } from 'react';
 import { notFound } from 'next/navigation';
 import ChannelContent from '@/components/layout/ChannelContent/ChannelContent';
-import { useResume } from '@/contexts/ResumeContext/ResumeContext';
+import { useResume } from '@/contexts/ResumeContext';
 import { MessageProps } from '@/components/common/Message/Message';
-import { getBotByChannel, getFullBotName } from '@/config/bots';
 
 interface ClientChannelProps {
   channelId: string;
 }
 
+// Helper function to create a stable timestamp
+const createStableTimestamp = (date?: string) => {
+  if (date) {
+    return new Date(date).toISOString();
+  }
+  // Use a fixed timestamp for messages without dates
+  return '2024-01-01T00:00:00.000Z';
+};
+
 const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
   const { resume } = useResume();
-  const bot = getBotByChannel(channelId);
-
-  if (!bot) {
-    notFound();
-  }
 
   const generateChannelContent = (channelId: string): MessageProps[] | null => {
     switch (channelId) {
       case 'intro':
         return [{
           content: resume.basics.summary,
-          pinned: true,
-          timestamp: new Date().toISOString(),
+          timestamp: createStableTimestamp(),
           author: {
-            name: getFullBotName(bot),
-            bot: true
+            name: 'Doorman',
+            bot: true,
+            emoji: '👋'
           }
         }];
 
@@ -75,10 +78,11 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               )}
             </div>
           ),
-          timestamp: new Date(job.startDate).toISOString(),
+          timestamp: createStableTimestamp(job.startDate),
           author: {
-            name: getFullBotName(bot),
-            bot: true
+            name: 'Scribe',
+            bot: true,
+            emoji: '💼'
           }
         }));
 
@@ -110,11 +114,12 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: new Date().toISOString(),
+          timestamp: createStableTimestamp(),
           pinned: true,
           author: {
-            name: getFullBotName(bot),
-            bot: true
+            name: 'Arsenal',
+            bot: true,
+            emoji: '🎯'
           }
         }];
 
@@ -166,10 +171,11 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: new Date().toISOString(),
+          timestamp: createStableTimestamp(project.startDate),
           author: {
-            name: getFullBotName(bot),
-            bot: true
+            name: 'Maker',
+            bot: true,
+            emoji: '🚀'
           }
         }));
 
@@ -208,10 +214,11 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: new Date(edu.startDate).toISOString(),
+          timestamp: createStableTimestamp(edu.startDate),
           author: {
-            name: getFullBotName(bot),
-            bot: true
+            name: 'Scholar',
+            bot: true,
+            emoji: '🎓'
           }
         }));
 
@@ -267,11 +274,11 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               )}
             </div>
           ),
-          pinned: true,
-          timestamp: new Date().toISOString(),
+          timestamp: createStableTimestamp(),
           author: {
-            name: getFullBotName(bot),
-            bot: true
+            name: 'Postman',
+            bot: true,
+            emoji: '📬'
           }
         }];
 
