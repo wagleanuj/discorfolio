@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useRef, useEffect, useState } from 'react';
 import Message, { MessageProps } from '@/components/common/Message/Message';
 import { Users } from 'lucide-react';
 import { useUi } from '@/contexts/UiContext';
@@ -17,13 +17,43 @@ interface ChannelContentProps {
 
 const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initialMessages }) => {
   const { isMembersListVisible, toggleMembersList } = useUi();
-  const { messages: chatMessages } = useChat();
+  const { messages: chatMessages, isLoading } = useChat();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
 
   // Combine initial messages with chat messages
   const allMessages = [
     ...initialMessages,
     ...(chatMessages[channelName] || [])
   ].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+  // Handle scrolling
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Scroll to bottom on new messages or when typing starts
+  useEffect(() => {
+    if (!userHasScrolled || isLoading) {
+      scrollToBottom();
+    }
+  }, [allMessages.length, isLoading, userHasScrolled]);
+
+  // Handle scroll events
+  const handleScroll = () => {
+    if (!messagesContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 50;
+
+    setUserHasScrolled(!isAtBottom);
+  };
+
+  // Reset userHasScrolled when changing channels
+  useEffect(() => {
+    setUserHasScrolled(false);
+  }, [channelName]);
 
   return (
     <div className="flex flex-1 h-full overflow-hidden">
@@ -59,10 +89,15 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initia
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div 
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto min-h-0"
+        >
           {allMessages.map((message, index) => (
             <Message key={`${message.timestamp}-${index}`} {...message} />
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Chat Input */}
