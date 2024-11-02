@@ -4,7 +4,6 @@ import { FC, useState } from 'react';
 import { UserStatus } from '@/components/common/UserStatus';
 import { MemberCard } from '@/components/common/MemberCard';
 import { useResume } from '@/contexts/ResumeContext';
-import { useUser } from '@/contexts/UserContext';
 import { usePathname } from 'next/navigation';
 import { getBotByChannel } from '@/config/bots';
 
@@ -14,21 +13,35 @@ const roles = [
 ];
 
 interface MemberCardState {
-  member: any;
   position: { x: number; y: number };
+  member?: Member;
 }
 
-const MemberList: FC = () => {
+interface Member {
+  id: string;
+  name: string;
+  status: 'online' | 'idle' | 'dnd' | 'offline';
+  role: {
+    id: string;
+    name: string;
+    color: string;
+  };
+  activity?: string;
+  emoji?: string;
+  initials?: string;
+  joinedAt: string;
+}
+
+export const MemberList: FC = () => {
   const [activeCard, setActiveCard] = useState<MemberCardState | null>(null);
   const { resume } = useResume();
-  const { user } = useUser();
   const pathname = usePathname();
   const currentChannelId = pathname.split('/').pop();
 
   // Get the current channel's bot
   const channelBot = currentChannelId ? getBotByChannel(currentChannelId) : null;
 
-  const handleMemberClick = (member: any, event: React.MouseEvent) => {
+  const handleMemberClick = (member: Member, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
     
     const position = {

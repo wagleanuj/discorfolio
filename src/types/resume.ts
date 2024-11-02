@@ -73,6 +73,7 @@ interface Education {
 }
 
 // Award
+//@eslint-disable-next-line
 interface Award {
   title: string;
   date?: ISO8601;
@@ -81,6 +82,7 @@ interface Award {
 }
 
 // Certificate
+//@eslint-disable-next-line
 interface Certificate {
   name: string;
   date?: ISO8601;
@@ -89,6 +91,7 @@ interface Certificate {
 }
 
 // Publication
+//@eslint-disable-next-line
 interface Publication {
   name: string;
   publisher?: string;
@@ -97,7 +100,7 @@ interface Publication {
   summary?: string;
 }
 
-// Skill
+// Skill 
 interface Skill {
   name: string;
   level?: string;
@@ -105,6 +108,7 @@ interface Skill {
 }
 
 // Language
+//@eslint-disable-next-line
 interface Language {
   language: string;
   fluency?: string;

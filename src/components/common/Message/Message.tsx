@@ -24,10 +24,9 @@ export interface MessageProps {
   content: React.ReactNode;
   timestamp: string;
   author?: MessageAuthor;
-  pinned?: boolean;
 }
 
-export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }) => {
+export const Message: FC<MessageProps> = ({ content, timestamp, author }) => {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
 

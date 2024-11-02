@@ -1,7 +1,6 @@
 'use client';
 
 import { FC } from 'react';
-import { cn } from '@/lib/utils';
 import { Github, Globe, Linkedin, Mail, Phone } from 'lucide-react';
 import { useResume } from '@/contexts/ResumeContext';
 import { UserStatus } from '@/components/common/UserStatus';

@@ -9,7 +9,6 @@ interface ServerIconProps {
   image?: string;
   icon?: ReactNode;
   selected?: boolean;
-  unread?: boolean;
 }
 
 export const ServerIcon: FC<ServerIconProps> = ({
@@ -17,7 +16,6 @@ export const ServerIcon: FC<ServerIconProps> = ({
   image,
   icon,
   selected = false,
-  unread = false,
 }) => {
   return (
     <div 

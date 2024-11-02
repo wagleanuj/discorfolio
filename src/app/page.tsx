@@ -50,7 +50,7 @@ export default function Home() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-discord-channel font-semibold mb-4">
-          Welcome to {resume.basics.name}'s Discorfolio Server! 👋
+          Welcome to {resume.basics.name}&apos;s Discorfolio Server! 👋
         </h1>
         <p className="text-discord-message text-discord-text-secondary">
           I am a {resume.basics.label}. Find more information about me and what I do in the channels list.

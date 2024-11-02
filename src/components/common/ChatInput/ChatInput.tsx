@@ -20,7 +20,6 @@ export const ChatInput: FC<ChatInputProps> = ({
   placeholder = "Message #channel..."
 }) => {
   const [message, setMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { addMessage, updateMessage, isLoading, setIsLoading, messages } = useChat();
   const { user } = useUser();
