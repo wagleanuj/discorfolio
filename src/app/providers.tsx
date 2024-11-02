@@ -1,7 +1,8 @@
 'use client';
 
 import { ResumeProvider } from '@/contexts/ResumeContext/ResumeContext';
-import { ReactNode, useEffect, useState } from 'react';
+import { UiProvider } from '@/contexts/UiContext';
+import { ReactNode } from 'react';
 import { Resume } from '@/types/resume';
 
 interface ProvidersProps {
@@ -10,19 +11,11 @@ interface ProvidersProps {
 }
 
 export function Providers({ children, initialResume }: ProvidersProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <ResumeProvider resume={initialResume}>
-      {children}
+      <UiProvider>
+        {children}
+      </UiProvider>
     </ResumeProvider>
   );
 } 

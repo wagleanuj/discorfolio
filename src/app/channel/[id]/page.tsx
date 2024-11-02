@@ -1,21 +1,19 @@
 import { Suspense } from 'react';
-import { use } from 'react';
 import ClientChannel from './ClientChannel';
 import Loading from './loading';
 
 interface PageProps {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }
 
 // Server Component
-export default function Page({ params }: PageProps) {
-  const resolvedParams = use(params);
-  
+export  default async function Page({ params }: PageProps) {
+  // No need to await params in Next.js 14 page components
   return (
     <Suspense fallback={<Loading />}>
-      <ClientChannel channelId={resolvedParams.id} />
+      <ClientChannel channelId={params.id} />
     </Suspense>
   );
 }

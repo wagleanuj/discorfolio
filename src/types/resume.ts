@@ -20,45 +20,55 @@ interface Profile {
 // Basics section
 interface Basics {
   name: string;
-  label?: string;
-  image?: string;
-  email?: string;
-  phone?: string;
-  url?: string;
-  summary?: string;
-  location?: Location;
-  profiles?: Profile[];
+  label: string;
+  image: string;
+  email: string;
+  phone: string;
+  summary: string;
+  location: {
+    address: string;
+    postalCode: string;
+    city: string;
+    countryCode: string;
+    region: string;
+    country: string;
+    province: string;
+    state: string;
+  };
+  profiles: Array<{
+    network: string;
+    username: string;
+    url: string;
+  }>;
 }
 
 // Work experience
 interface Work {
   name: string;
-  location?: string;
-  description?: string;
-  position?: string;
+  location: string;
+  position: string;
   url?: string;
-  startDate?: ISO8601;
-  endDate?: ISO8601;
-  summary?: string;
-  highlights?: string[];
-  company?: string;
+  startDate: string;
+  endDate: string;
+  summary: string;
+  highlights: string[];
+  company: string;
   website?: string;
 }
 
 // Education
 interface Education {
   institution: string;
-  url?: string;
-  area?: string;
-  studyType?: string;
-  startDate?: ISO8601;
-  endDate?: ISO8601;
-  score?: string;
-  courses?: string[];
-  location?: string;
-  address?: string;
-  field?: string;
-  major?: string;
+  url: string;
+  area: string;
+  studyType: string;
+  startDate: string;
+  endDate: string;
+  score: string;
+  location: string;
+  address: string;
+  field: string;
+  major: string;
 }
 
 // Award
@@ -90,7 +100,7 @@ interface Publication {
 interface Skill {
   name: string;
   level?: string;
-  keywords?: string[];
+  keywords: string[];
 }
 
 // Language
@@ -114,11 +124,11 @@ interface Reference {
 // Project
 interface Project {
   name: string;
-  description?: string;
-  highlights?: string[];
-  keywords?: string[];
-  startDate?: ISO8601;
-  endDate?: ISO8601;
+  description: string;
+  highlights: string[];
+  keywords: string[];
+  startDate?: string;
+  endDate?: string;
   url?: string;
   roles?: string[];
   entity?: string;
@@ -134,71 +144,11 @@ interface Meta {
 
 // Main Resume interface
 export interface Resume {
-  basics: {
-    name: string;
-    label: string;
-    image: string;
-    email: string;
-    phone: string;
-    summary: string;
-    location: {
-      address: string;
-      postalCode: string;
-      city: string;
-      countryCode: string;
-      region: string;
-      country: string;
-      province: string;
-      state: string;
-    };
-    profiles: Array<{
-      network: string;
-      username: string;
-      url: string;
-    }>;
-  };
-  work: Array<{
-    name: string;
-    location: string;
-    position: string;
-    url?: string;
-    startDate: string;
-    endDate: string;
-    summary: string;
-    highlights: string[];
-    company: string;
-    website?: string;
-  }>;
-  education: Array<{
-    institution: string;
-    url: string;
-    area: string;
-    studyType: string;
-    startDate: string;
-    endDate: string;
-    score: string;
-    location: string;
-    address: string;
-    field: string;
-    major: string;
-  }>;
-  skills: Array<{
-    name: string;
-    level?: string;
-    keywords: string[];
-  }>;
-  projects: Array<{
-    name: string;
-    description: string;
-    highlights: string[];
-    keywords: string[];
-    startDate?: string;
-    endDate?: string;
-    url?: string;
-    roles?: string[];
-    entity?: string;
-    type?: string;
-  }>;
+  basics: Basics;
+  work: Work[];
+  education: Education[];
+  skills: Skill[];
+  projects: Project[];
   meta: {
     lastModified: string;
   };

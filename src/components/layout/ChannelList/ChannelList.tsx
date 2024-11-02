@@ -2,12 +2,13 @@
 
 import { FC, useState } from 'react';
 import Link from 'next/link';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, Hash, UserCircle2, Briefcase, Wrench, FolderGit2, GraduationCap, AtSign } from 'lucide-react';
 
 interface Channel {
   id: string;
   name: string;
   type: 'text';
+  icon: typeof Hash;
 }
 
 interface ChannelCategory {
@@ -22,24 +23,24 @@ const channelCategories: ChannelCategory[] = [
     id: 'about',
     name: 'ABOUT ME',
     channels: [
-      { id: 'intro', name: 'introduction', type: 'text' },
-      { id: 'contact', name: 'contact', type: 'text' },
+      { id: 'intro', name: 'introduction', type: 'text', icon: UserCircle2 },
+      { id: 'contact', name: 'contact', type: 'text', icon: AtSign },
     ]
   },
   {
     id: 'professional',
     name: 'PROFESSIONAL',
     channels: [
-      { id: 'exp', name: 'experience', type: 'text' },
-      { id: 'skills', name: 'skills', type: 'text' },
-      { id: 'edu', name: 'education', type: 'text' },
+      { id: 'exp', name: 'experience', type: 'text', icon: Briefcase },
+      { id: 'skills', name: 'skills', type: 'text', icon: Wrench },
+      { id: 'edu', name: 'education', type: 'text', icon: GraduationCap },
     ]
   },
   {
     id: 'portfolio',
     name: 'PORTFOLIO',
     channels: [
-      { id: 'projects', name: 'projects', type: 'text' },
+      { id: 'projects', name: 'projects', type: 'text', icon: FolderGit2 },
     ]
   }
 ];
@@ -63,7 +64,7 @@ const ChannelList: FC = () => {
     <div className="w-60 bg-discord-secondary flex flex-col font-sans">
       {/* Server Name */}
       <div className="h-12 px-4 flex items-center justify-between shadow-sm border-b border-discord-tertiary">
-        <h2 className="text-white font-semibold text-discord-channel">Portfolio Server</h2>
+        <h2 className="text-white font-semibold text-server-name">Portfolio Server</h2>
         <button className="text-discord-text-muted hover:text-discord-text-primary">
           <ChevronDown size={20} />
         </button>
@@ -76,7 +77,7 @@ const ChannelList: FC = () => {
             {/* Category Header */}
             <button
               onClick={() => toggleCategory(category.id)}
-              className="flex items-center w-full px-1 mb-1 text-discord-category font-semibold text-discord-text-muted hover:text-discord-text-secondary group tracking-discord-category uppercase"
+              className="flex items-center w-full px-1 mb-1 text-category font-semibold text-discord-text-muted hover:text-discord-text-secondary group tracking-category uppercase"
             >
               {collapsedCategories.has(category.id) ? (
                 <ChevronRight size={12} className="mr-0.5 flex-shrink-0" />
@@ -89,16 +90,19 @@ const ChannelList: FC = () => {
             {/* Category Channels */}
             {!collapsedCategories.has(category.id) && (
               <div className="space-y-[2px]">
-                {category.channels.map((channel) => (
-                  <Link 
-                    key={channel.id}
-                    href={`/channel/${channel.id}`}
-                    className="flex items-center px-2 py-[6px] text-discord-text-muted hover:text-discord-text-primary hover:bg-discord-hover rounded cursor-pointer group"
-                  >
-                    <span className="text-discord-small mr-1.5">#</span>
-                    <span className="text-discord-small font-[500] truncate">{channel.name}</span>
-                  </Link>
-                ))}
+                {category.channels.map((channel) => {
+                  const Icon = channel.icon;
+                  return (
+                    <Link 
+                      key={channel.id}
+                      href={`/channel/${channel.id}`}
+                      className="flex items-center px-2 py-[6px] text-discord-text-muted hover:text-discord-text-primary hover:bg-discord-hover rounded cursor-pointer group"
+                    >
+                      <Icon size={18} className="mr-1.5 flex-shrink-0" />
+                      <span className="text-channel-name font-[500] truncate">{channel.name}</span>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>

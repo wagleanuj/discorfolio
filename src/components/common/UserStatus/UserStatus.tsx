@@ -1,12 +1,16 @@
 'use client';
 
 import { FC } from 'react';
+import { cn } from '@/lib/utils';
+
+type StatusType = 'online' | 'idle' | 'dnd' | 'offline';
 
 interface UserStatusProps {
-  status: 'online' | 'idle' | 'dnd' | 'offline';
+  status: StatusType;
+  className?: string;
 }
 
-const UserStatus: FC<UserStatusProps> = ({ status }) => {
+export const UserStatus: FC<UserStatusProps> = ({ status, className }) => {
   const statusColors = {
     online: 'bg-discord-online',
     idle: 'bg-discord-warning',
@@ -15,9 +19,11 @@ const UserStatus: FC<UserStatusProps> = ({ status }) => {
   };
 
   return (
-    <div className="relative">
-      <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${statusColors[status]} border-2 border-discord-tertiary`} />
-    </div>
+    <div className={cn(
+      "absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full border-[2.5px] border-discord-tertiary",
+      statusColors[status],
+      className
+    )} />
   );
 };
 
