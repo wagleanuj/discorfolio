@@ -141,7 +141,7 @@ const ChannelList: FC = () => {
             <div className="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full bg-discord-online border-[2.5px] border-discord-tertiary"></div>
           </div>
           <div className="flex flex-col">
-            <span className="text-white text-discord-small font-medium">Anuj Wagle</span>
+            <span className="text-white text-discord-small font-medium">Curious Panda</span>
             <span className="text-discord-text-muted text-discord-timestamp">Online</span>
           </div>
         </div>

@@ -1,8 +1,10 @@
 'use client';
 
-import { FC, useEffect } from 'react';
-import { UserStatus } from '@/components/common/UserStatus';
+import { FC } from 'react';
 import { cn } from '@/lib/utils';
+import { Github, Linkedin, Mail, Phone } from 'lucide-react';
+import { useResume } from '@/contexts/ResumeContext';
+import { UserStatus } from '@/components/common/UserStatus';
 
 interface MemberCardProps {
   member: {
@@ -15,35 +17,24 @@ interface MemberCardProps {
       color: string;
     };
     activity?: string;
-    avatar?: string;
-    joinedAt?: string;
+    emoji?: string;
   };
   position: { x: number; y: number };
   onClose: () => void;
 }
 
-const getBotGradient = (botId: string): string => {
-  const gradients = {
-    doorman: 'linear-gradient(45deg, #FF6B6B, #FF9B6B, #FFB86B, #FFD56B)',    // Warm welcome
-    scribe: 'linear-gradient(45deg, #4ECDC4, #45B7D1, #2FA0B3, #1A535C)',     // Professional blue
-    arsenal: 'linear-gradient(45deg, #9B6BFF, #6B8AFF, #6BAFFF, #6BD4FF)',    // Skill purple
-    maker: 'linear-gradient(45deg, #FF6B9B, #FF6BBF, #FF6BE3, #FF6BFF)',      // Creative pink
-    scholar: 'linear-gradient(45deg, #6BFF9B, #6BFFBF, #6BFFE3, #6BFFFF)',    // Academic green
-    postman: 'linear-gradient(45deg, #FFD56B, #FFE36B, #FFF16B, #FFFF6B)',    // Contact yellow
-    owner: 'linear-gradient(45deg, #5865F2, #4752C4, #3C45A5, #2C3875)',      // Discord blurple
+export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) => {
+  const { resume } = useResume();
+  const isOwner = member.role.id === 'owner';
+
+  const findProfile = (network: string) => {
+    return resume.basics.profiles.find(
+      p => p.network.toLowerCase() === network.toLowerCase()
+    );
   };
 
-  return gradients[botId as keyof typeof gradients] || gradients.owner;
-};
-
-export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) => {
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+  const githubProfile = findProfile('github');
+  const linkedinProfile = findProfile('linkedin');
 
   return (
     <>
@@ -65,7 +56,9 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
         <div 
           className="h-20 relative overflow-hidden animate-fade-up"
           style={{
-            background: getBotGradient(member.id)
+            background: member.role.id === 'owner' 
+              ? 'linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #1A535C)'
+              : 'linear-gradient(45deg, #5865F2, #4752C4, #3C45A5, #2C3875)'
           }}
         >
           {/* Animated gradient overlay */}
@@ -83,26 +76,20 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
           {/* Avatar with Status */}
           <div className="relative -mt-10 mb-3 animate-scale-in">
             <div className="relative w-20 h-20">
-              <div className="w-full h-full rounded-full bg-discord-primary border-[6px] border-discord-primary ring-2 ring-black/20 flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-200">
-                {member.avatar ? (
-                  <img 
-                    src={member.avatar} 
-                    alt={member.name} 
-                    className="w-full h-full rounded-full object-cover"
-                  />
+              <div className="w-full h-full rounded-full bg-discord-primary border-[6px] border-discord-primary ring-2 ring-black/20 flex items-center justify-center overflow-hidden">
+                {member.emoji ? (
+                  <span className="text-4xl">{member.emoji}</span>
                 ) : (
                   <span className="text-white text-2xl font-medium">
                     {member.name.slice(0, 2).toUpperCase()}
                   </span>
                 )}
               </div>
-              {/* Status indicator overlaid on avatar */}
-              <div className="absolute -bottom-1 -right-1 rounded-full border-4 border-discord-primary ring-2 ring-black/20 animate-scale-in">
-                <UserStatus 
-                  status={member.status} 
-                  className="w-6 h-6"
-                />
-              </div>
+              {/* Status indicator */}
+              <UserStatus 
+                status={member.status} 
+                className="w-6 h-6 border-4 border-discord-primary"
+              />
             </div>
           </div>
 
@@ -119,7 +106,7 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
             </div>
 
             {member.activity && (
-              <div className="pt-3 border-t border-discord-secondary animate-fade-in">
+              <div className="pt-3 border-t border-discord-secondary">
                 <h4 className="text-xs font-semibold text-discord-text-muted uppercase mb-1">
                   ACTIVITY
                 </h4>
@@ -129,14 +116,78 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
               </div>
             )}
 
-            {member.joinedAt && (
-              <div className="pt-3 border-t border-discord-secondary animate-fade-in">
-                <h4 className="text-xs font-semibold text-discord-text-muted uppercase mb-1">
-                  JOINED SERVER
+            {/* Social Links - Only shown for portfolio owner */}
+            {isOwner && (
+              <div className="pt-3 border-t border-discord-secondary">
+                <h4 className="text-xs font-semibold text-discord-text-muted uppercase mb-2">
+                  SOCIALS
                 </h4>
-                <p className="text-discord-text-primary text-sm">
-                  {new Date(member.joinedAt).toLocaleDateString()}
-                </p>
+                <div className="flex flex-wrap gap-2">
+                  {/* GitHub */}
+                  {githubProfile && (
+                    <a 
+                      href={githubProfile.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
+                    >
+                      <Github className="w-4 h-4 text-discord-text-muted group-hover:text-discord-text-primary" />
+                    </a>
+                  )}
+
+                  {/* LinkedIn */}
+                  {linkedinProfile && (
+                    <a 
+                      href={linkedinProfile.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
+                    >
+                      <Linkedin className="w-4 h-4 text-discord-text-muted group-hover:text-discord-text-primary" />
+                    </a>
+                  )}
+
+                  {/* Email */}
+                  <a 
+                    href={`mailto:${resume.basics.email}`}
+                    className="flex items-center gap-2 px-3 py-2 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
+                  >
+                    <Mail className="w-4 h-4 text-discord-text-muted group-hover:text-discord-text-primary" />
+                  </a>
+
+                  {/* Website if available */}
+                  {resume.basics.url && (
+                    <a 
+                      href={resume.basics.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
+                    >
+                      <Globe className="w-4 h-4 text-discord-text-muted group-hover:text-discord-text-primary" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Contact Info - Only shown for portfolio owner */}
+            {isOwner && (
+              <div className="pt-3 border-t border-discord-secondary">
+                <h4 className="text-xs font-semibold text-discord-text-muted uppercase mb-2">
+                  CONTACT
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-discord-text-primary">
+                    <Mail className="w-4 h-4 text-discord-text-muted" />
+                    {resume.basics.email}
+                  </div>
+                  {resume.basics.phone && (
+                    <div className="flex items-center gap-2 text-discord-text-primary">
+                      <Phone className="w-4 h-4 text-discord-text-muted" />
+                      {resume.basics.phone}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

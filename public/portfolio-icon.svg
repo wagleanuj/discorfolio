@@ -2,28 +2,27 @@
   <!-- Background Circle -->
   <circle cx="24" cy="24" r="24" fill="#5865F2"/>
   
-  <!-- Briefcase Body - Made Larger -->
-  <path d="M12 18H36V36H12V18Z" fill="white"/>
-  <path d="M18 14H30V18H18V14Z" fill="white"/>
+  <!-- Briefcase Outline -->
+  <path 
+    d="M14 19H34V34H14V19ZM20 15H28V19H20V15Z" 
+    stroke="white" 
+    stroke-width="2" 
+    fill="none"
+  />
   
-  <!-- Handle - Repositioned -->
-  <path d="M21 15H27V17H21V15Z" fill="#5865F2"/>
+  <!-- Handle -->
+  <path 
+    d="M22 17H26" 
+    stroke="white" 
+    stroke-width="2" 
+    stroke-linecap="round"
+  />
   
-  <!-- Details - Adjusted for new size -->
-  <path d="M12 22H36V23H12V22Z" fill="#5865F2"/>
-  <path d="M24 18V36" stroke="#5865F2" stroke-width="1.5"/>
-  
-  <!-- Side Pockets -->
-  <path d="M15 25H21V33H15V25Z" fill="#5865F2" fill-opacity="0.1"/>
-  <path d="M27 25H33V33H27V25Z" fill="#5865F2" fill-opacity="0.1"/>
-  
-  <!-- Shine Effects -->
-  <path d="M14 20L17 20" stroke="white" stroke-opacity="0.5" stroke-width="1.5"/>
-  <path d="M31 20L34 20" stroke="white" stroke-opacity="0.5" stroke-width="1.5"/>
-  
-  <!-- Bottom Shadow -->
-  <path d="M12 33H36V36H12V33Z" fill="#5865F2" fill-opacity="0.2"/>
-  
-  <!-- Lock Detail -->
-  <rect x="22" y="21" width="4" height="3" rx="1" fill="#5865F2"/>
+  <!-- Middle Line -->
+  <path 
+    d="M14 24H34" 
+    stroke="white" 
+    stroke-width="2" 
+    stroke-opacity="0.5"
+  />
 </svg> 

@@ -52,32 +52,30 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }
     const date = new Date(isoString);
     const today = new Date();
     
-    // If it's today, show time
     if (date.toDateString() === today.toDateString()) {
       return format(date, 'h:mm a');
     }
     
-    // If it's within the last 7 days, show relative time
     if (Date.now() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
       return formatDistanceToNow(date, { addSuffix: true });
     }
     
-    // Otherwise show the date
     return format(date, 'MMM d, yyyy');
   };
 
   return (
     <div 
       className={cn(
-        "px-4 py-2 hover:bg-discord-secondary/10 group relative",
-        "flex gap-4"
+        "px-4 py-2 group relative flex items-start gap-4",
+        "hover:bg-[#32353B]",
+        "transition-colors duration-100"
       )}
       onMouseEnter={() => setShowReactionPicker(true)}
       onMouseLeave={() => setShowReactionPicker(false)}
     >
       {/* Avatar */}
       {author && (
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 mt-0.5">
           <div className={cn(
             "w-10 h-10 rounded-full flex items-center justify-center",
             "bg-discord-brand text-white font-medium text-lg",
@@ -114,7 +112,7 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }
           {content}
         </div>
 
-        {/* Reactions - Fixed to be truly horizontal */}
+        {/* Reactions */}
         {reactions.length > 0 && (
           <div className="mt-2 whitespace-nowrap">
             <div className="inline-flex items-center gap-1">

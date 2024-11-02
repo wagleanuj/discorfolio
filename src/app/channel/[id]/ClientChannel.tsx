@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import ChannelContent from '@/components/layout/ChannelContent/ChannelContent';
 import { useResume } from '@/contexts/ResumeContext';
 import { MessageProps } from '@/components/common/Message/Message';
+import { Mail, Phone, MapPin, Github, Linkedin } from 'lucide-react';
 
 interface ClientChannelProps {
   channelId: string;
@@ -225,53 +226,71 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
       case 'contact':
         return [{
           content: (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
-                <div className="space-y-3">
-                  <p className="flex items-center gap-2">
-                    <span className="text-xl">📧</span>
-                    <a href={`mailto:${resume.basics.email}`} className="text-discord-link hover:underline">
-                      {resume.basics.email}
-                    </a>
-                  </p>
-                  {resume.basics.phone && (
-                    <p className="flex items-center gap-2">
-                      <span className="text-xl">📱</span>
-                      <span>{resume.basics.phone}</span>
-                    </p>
-                  )}
-                  <p className="flex items-center gap-2">
-                    <span className="text-xl">📍</span>
-                    <span>
-                      {resume.basics.location.city}, {resume.basics.location.province}, {resume.basics.location.country}
-                    </span>
-                  </p>
+            <div className="space-y-4">
+              <div className="bg-discord-secondary/30 rounded-lg p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-white">Contact Information</h3>
                 </div>
-              </div>
+                
+                <div className="grid gap-3">
+                  {/* Email */}
+                  <a 
+                    href={`mailto:${resume.basics.email}`}
+                    className="flex items-center gap-3 p-3 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-discord-brand/20 flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-discord-brand group-hover:text-white transition-colors" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-discord-text-muted">Email</div>
+                      <div className="text-discord-text-primary font-medium">{resume.basics.email}</div>
+                    </div>
+                  </a>
 
-              {resume.basics.profiles && resume.basics.profiles.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-3">Professional Profiles</h4>
-                  <div className="space-y-2">
-                    {resume.basics.profiles.map((profile, i) => (
-                      <a 
-                        key={i}
+                  {/* Phone */}
+                  <div className="flex items-center gap-3 p-3 bg-discord-secondary/30 rounded-md">
+                    <div className="w-10 h-10 rounded-full bg-discord-brand/20 flex items-center justify-center">
+                      <Phone className="w-5 h-5 text-discord-brand" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-discord-text-muted">Phone</div>
+                      <div className="text-discord-text-primary font-medium">{resume.basics.phone}</div>
+                    </div>
+                  </div>
+
+                  {/* Location */}
+                  <div className="flex items-center gap-3 p-3 bg-discord-secondary/30 rounded-md">
+                    <div className="w-10 h-10 rounded-full bg-discord-brand/20 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-discord-brand" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-discord-text-muted">Location</div>
+                      <div className="text-discord-text-primary font-medium">
+                        {resume.basics.location.city}, {resume.basics.location.region}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {resume.basics.profiles.map((profile) => (
+                      <a
+                        key={profile.network}
                         href={profile.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-discord-link hover:underline"
+                        className="flex items-center gap-2 px-3 py-2 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
                       >
-                        <span className="text-xl">
-                          {profile.network === 'Linkedin' ? '💼' : 
-                           profile.network === 'Github' ? '💻' : '🔗'}
-                        </span>
-                        {profile.network}: @{profile.username}
+                        <div className="text-discord-brand group-hover:text-white transition-colors">
+                          {profile.network === 'GitHub' && <Github className="w-5 h-5" />}
+                          {profile.network === 'LinkedIn' && <Linkedin className="w-5 h-5" />}
+                        </div>
+                        <span className="text-discord-text-primary font-medium">{profile.network}</span>
                       </a>
                     ))}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           ),
           timestamp: createStableTimestamp(),
