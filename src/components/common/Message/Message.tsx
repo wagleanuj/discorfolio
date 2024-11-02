@@ -12,14 +12,18 @@ interface Reaction {
   users: string[];
 }
 
+interface MessageAuthor {
+  name: string;
+  bot?: boolean;
+  emoji?: string;
+  color?: string;
+  initials?: string;
+}
+
 export interface MessageProps {
   content: React.ReactNode;
   timestamp: string;
-  author?: {
-    name: string;
-    bot?: boolean;
-    emoji?: string;
-  };
+  author?: MessageAuthor;
   pinned?: boolean;
 }
 
@@ -78,12 +82,16 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }
         <div className="flex-shrink-0 mt-0.5">
           <div className={cn(
             "w-10 h-10 rounded-full flex items-center justify-center",
-            "bg-discord-brand text-white font-medium text-lg",
-            author.bot && "bg-discord-brand ring-2 ring-discord-primary"
-          )}>
-            {author.emoji && (
+            "text-white font-medium text-lg",
+            author.bot ? "bg-discord-brand ring-2 ring-discord-primary" : "ring-2 ring-discord-primary"
+          )}
+          style={author.color ? { backgroundColor: author.color } : undefined}
+          >
+            {author.emoji ? (
               <span className="text-2xl">{author.emoji}</span>
-            )}
+            ) : author.initials ? (
+              <span className="text-base">{author.initials}</span>
+            ) : null}
           </div>
         </div>
       )}

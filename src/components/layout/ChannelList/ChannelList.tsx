@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { ServerHeader } from '@/components/layout/ServerHeader';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/contexts/UserContext';
 
 interface Channel {
   id: string;
@@ -51,6 +52,7 @@ const ChannelList: FC = () => {
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
   const pathname = usePathname();
   const currentChannelId = pathname.split('/').pop();
+  const { user } = useUser();
 
   const toggleCategory = (categoryId: string) => {
     setCollapsedCategories(prev => {
@@ -107,14 +109,14 @@ const ChannelList: FC = () => {
                           "flex items-center px-2 py-[6px] rounded-md cursor-pointer",
                           "transition-all duration-100 ease-out",
                           isActive ? [
-                            "bg-[#404249]",  // Darker background when selected
-                            "text-white",     // Brighter text when selected
-                            "shadow-sm",      // Subtle shadow for depth
-                            "font-medium"     // Slightly bolder text
+                            "bg-[#404249]",
+                            "text-white",
+                            "shadow-sm",
+                            "font-medium"
                           ] : [
                             "text-discord-text-muted",
                             "hover:text-discord-text-primary",
-                            "hover:bg-[#35373C]" // Slightly darker on hover
+                            "hover:bg-[#35373C]"
                           ]
                         )}
                       >
@@ -136,12 +138,12 @@ const ChannelList: FC = () => {
       {/* User Info */}
       <div className="h-[52px] px-2 flex items-center bg-discord-tertiary mt-auto">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-full bg-discord-brand flex items-center justify-center relative">
-            <span className="text-white text-discord-small font-medium">AW</span>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center relative" style={{ backgroundColor: user.color }}>
+            <span className="text-white text-discord-small font-medium">{user.initials}</span>
             <div className="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full bg-discord-online border-[2.5px] border-discord-tertiary"></div>
           </div>
           <div className="flex flex-col">
-            <span className="text-white text-discord-small font-medium">Curious Panda</span>
+            <span className="text-white text-discord-small font-medium">{user.name}</span>
             <span className="text-discord-text-muted text-discord-timestamp">Online</span>
           </div>
         </div>

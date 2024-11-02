@@ -7,14 +7,23 @@ import { useUi } from '@/contexts/UiContext';
 import MemberList from '@/components/layout/MemberList/MemberList';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/common/Tooltip/Tooltip';
+import { ChatInput } from '@/components/common/ChatInput';
+import { useChat } from '@/contexts/ChatContext';
 
 interface ChannelContentProps {
   channelName: string;
   messages: MessageProps[];
 }
 
-const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages }) => {
+const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initialMessages }) => {
   const { isMembersListVisible, toggleMembersList } = useUi();
+  const { messages: chatMessages } = useChat();
+
+  // Combine initial messages with chat messages
+  const allMessages = [
+    ...initialMessages,
+    ...(chatMessages[channelName] || [])
+  ].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
   return (
     <div className="flex flex-1 h-full overflow-hidden">
@@ -51,20 +60,16 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages }) => {
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto min-h-0">
-          {messages.map((message, index) => (
-            <Message key={index} {...message} />
+          {allMessages.map((message, index) => (
+            <Message key={`${message.timestamp}-${index}`} {...message} />
           ))}
         </div>
 
-        {/* Input Area (disabled for now) */}
-        <div className="h-16 px-4 m-4 bg-discord-tertiary rounded-lg flex items-center flex-shrink-0">
-          <input
-            type="text"
-            disabled
-            placeholder="Chat coming soon..."
-            className="w-full bg-transparent text-discord-text-primary outline-none"
-          />
-        </div>
+        {/* Chat Input */}
+        <ChatInput 
+          channelId={channelName}
+          placeholder={`Message #${channelName}`}
+        />
       </div>
 
       {/* Members List */}

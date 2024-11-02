@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 import { UserStatus } from '@/components/common/UserStatus';
 import { MemberCard } from '@/components/common/MemberCard';
 import { useResume } from '@/contexts/ResumeContext';
+import { useUser } from '@/contexts/UserContext';
 
 const roles = [
   { id: 'owner', name: 'Portfolio Owner', color: '#f47fff' },
@@ -27,6 +28,7 @@ interface MemberCardState {
 const MemberList: FC = () => {
   const [activeCard, setActiveCard] = useState<MemberCardState | null>(null);
   const { resume } = useResume();
+  const { user } = useUser();
 
   const handleMemberClick = (member: any, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -46,13 +48,14 @@ const MemberList: FC = () => {
   };
 
   const members = [
-    // Owner - using resume data
+    // Owner - using visitor info for current user
     {
       id: 'owner',
       name: resume.basics.name,
       status: 'online' as const,
       role: roles[0],
-      activity: 'Building awesome stuff'
+      activity: 'Building awesome stuff',
+      initials: resume.basics.name.split(' ').map(n => n[0]).join('')
     },
     // Bots
     ...Object.entries(botEmojis).map(([id, emoji]) => ({
@@ -99,7 +102,7 @@ const MemberList: FC = () => {
                           <span className="text-xl">{member.emoji}</span>
                         ) : (
                           <span className="text-white text-sm">
-                            {member.name.split(' ').map(n => n[0]).join('')}
+                            {member.initials}
                           </span>
                         )}
                       </div>
