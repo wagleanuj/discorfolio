@@ -1,24 +1,57 @@
 'use client';
 
 import { FC } from 'react';
+import { ServerIcon } from '@/components/common/ServerIcon';
+import { Tooltip } from '@/components/common/Tooltip';
+import { Github, Linkedin } from 'lucide-react';
 
-interface ServerListProps {}
-
-const ServerList: FC<ServerListProps> = () => {
+const ServerList: FC = () => {
   return (
     <div className="w-[72px] bg-discord-tertiary flex flex-col items-center pt-3 space-y-2">
       {/* Home Button */}
-      <div className="w-12 h-12 rounded-full bg-discord-brand flex items-center justify-center text-white cursor-pointer hover:rounded-2xl transition-all duration-200">
-        AW
-      </div>
+      <Tooltip content="Portfolio" position="right">
+        <div>
+          <ServerIcon
+            name="Portfolio"
+            image="/portfolio-icon.svg"
+            selected={true}
+            unread={false}
+          />
+        </div>
+      </Tooltip>
       
       {/* Separator */}
       <div className="w-8 h-[2px] bg-discord-secondary rounded-full" />
       
-      {/* Server Icon (Portfolio) */}
-      <div className="w-12 h-12 rounded-[24px] bg-discord-secondary flex items-center justify-center text-white cursor-pointer hover:bg-discord-brand hover:rounded-2xl transition-all duration-200">
-        P
-      </div>
+      {/* GitHub */}
+      <Tooltip content="GitHub" position="right">
+        <a 
+          href="https://github.com/wagleanuj" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          <ServerIcon
+            name="GitHub"
+            icon={<Github className="w-6 h-6 text-white" />}
+            unread={false}
+          />
+        </a>
+      </Tooltip>
+
+      {/* LinkedIn */}
+      <Tooltip content="LinkedIn" position="right">
+        <a 
+          href="https://www.linkedin.com/in/wagleanuj" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          <ServerIcon
+            name="LinkedIn"
+            icon={<Linkedin className="w-6 h-6 text-white" />}
+            unread={false}
+          />
+        </a>
+      </Tooltip>
     </div>
   );
 };

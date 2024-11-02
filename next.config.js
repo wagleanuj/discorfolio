@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: [], // Add any image domains you need here
+    domains: ['cdn.jsdelivr.net'], // Allow loading images from jsdelivr
   },
   // Disable type checking during builds for better performance
   typescript: {

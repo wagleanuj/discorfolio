@@ -1,0 +1,29 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="24" cy="24" r="24" fill="#5865F2"/>
+  
+  <!-- Briefcase Body - Made Larger -->
+  <path d="M12 18H36V36H12V18Z" fill="white"/>
+  <path d="M18 14H30V18H18V14Z" fill="white"/>
+  
+  <!-- Handle - Repositioned -->
+  <path d="M21 15H27V17H21V15Z" fill="#5865F2"/>
+  
+  <!-- Details - Adjusted for new size -->
+  <path d="M12 22H36V23H12V22Z" fill="#5865F2"/>
+  <path d="M24 18V36" stroke="#5865F2" stroke-width="1.5"/>
+  
+  <!-- Side Pockets -->
+  <path d="M15 25H21V33H15V25Z" fill="#5865F2" fill-opacity="0.1"/>
+  <path d="M27 25H33V33H27V25Z" fill="#5865F2" fill-opacity="0.1"/>
+  
+  <!-- Shine Effects -->
+  <path d="M14 20L17 20" stroke="white" stroke-opacity="0.5" stroke-width="1.5"/>
+  <path d="M31 20L34 20" stroke="white" stroke-opacity="0.5" stroke-width="1.5"/>
+  
+  <!-- Bottom Shadow -->
+  <path d="M12 33H36V36H12V33Z" fill="#5865F2" fill-opacity="0.2"/>
+  
+  <!-- Lock Detail -->
+  <rect x="22" y="21" width="4" height="3" rx="1" fill="#5865F2"/>
+</svg> 
