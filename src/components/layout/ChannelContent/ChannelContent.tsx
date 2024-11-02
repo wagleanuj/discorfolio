@@ -2,7 +2,7 @@
 
 import { FC, useRef, useEffect, useState } from 'react';
 import Message, { MessageProps } from '@/components/common/Message/Message';
-import { Users } from 'lucide-react';
+import { Users, ArrowDown } from 'lucide-react';
 import { useUi } from '@/contexts/UiContext';
 import MemberList from '@/components/layout/MemberList/MemberList';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,7 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initia
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [userHasScrolled, setUserHasScrolled] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   // Combine initial messages with chat messages
   const allMessages = [
@@ -28,15 +29,20 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initia
     ...(chatMessages[channelName] || [])
   ].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
-  // Handle scrolling
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Smooth scroll to bottom
+  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior,
+        block: 'end'
+      });
+    }
   };
 
-  // Scroll to bottom on new messages or when typing starts
+  // Initial scroll and new message scroll
   useEffect(() => {
     if (!userHasScrolled || isLoading) {
-      scrollToBottom();
+      scrollToBottom(userHasScrolled ? 'smooth' : 'auto');
     }
   }, [allMessages.length, isLoading, userHasScrolled]);
 
@@ -45,14 +51,19 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initia
     if (!messagesContainerRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 50;
+    const distanceFromBottom = scrollHeight - clientHeight - scrollTop;
+    const isAtBottom = distanceFromBottom < 100;
+    const shouldShowButton = distanceFromBottom > 400;
 
     setUserHasScrolled(!isAtBottom);
+    setShowScrollButton(shouldShowButton);
   };
 
-  // Reset userHasScrolled when changing channels
+  // Reset scroll state when changing channels
   useEffect(() => {
     setUserHasScrolled(false);
+    setShowScrollButton(false);
+    scrollToBottom('auto');
   }, [channelName]);
 
   return (
@@ -92,19 +103,44 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initia
         <div 
           ref={messagesContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto min-h-0"
+          className="flex-1 overflow-y-auto min-h-0 relative scroll-smooth"
         >
-          {allMessages.map((message, index) => (
-            <Message key={`${message.timestamp}-${index}`} {...message} />
-          ))}
-          <div ref={messagesEndRef} />
+          <div className="min-h-full flex flex-col justify-end">
+            {allMessages.map((message, index) => (
+              <Message key={`${message.timestamp}-${index}`} {...message} />
+            ))}
+            <div className="h-6" />
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Scroll to Bottom Button */}
+          {showScrollButton && (
+            <button
+              onClick={() => {
+                scrollToBottom();
+                setUserHasScrolled(false);
+              }}
+              className={cn(
+                "absolute bottom-8 right-4",
+                "bg-discord-primary shadow-elevation-high rounded-full p-2",
+                "text-discord-text-primary hover:text-white",
+                "transition-all duration-200 ease-in-out",
+                "flex items-center gap-2",
+                "animate-bounce"
+              )}
+            >
+              <ArrowDown size={20} />
+            </button>
+          )}
         </div>
 
-        {/* Chat Input */}
-        <ChatInput 
-          channelId={channelName}
-          placeholder={`Message #${channelName}`}
-        />
+        {/* Chat Input with top margin */}
+        <div className="mt-4">
+          <ChatInput 
+            channelId={channelName}
+            placeholder={`Message #${channelName}`}
+          />
+        </div>
       </div>
 
       {/* Members List */}
