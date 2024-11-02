@@ -5,10 +5,14 @@ import { loadResume } from "@/lib/utils/resumeLoader";
 import { ggSans } from "@/config/fonts";
 import { WindowContainer } from "@/components/layout/WindowContainer";
 
-export const metadata: Metadata = {
-  title: "Portfolio | Discord Style",
-  description: "A Discord-style portfolio website",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const resume = await loadResume();
+  
+  return {
+    title: `${resume.basics.name} | Discorfolio`,
+    description: `${resume.basics.name}'s portfolio - ${resume.basics.label}`,
+  };
+}
 
 export default async function RootLayout({
   children,

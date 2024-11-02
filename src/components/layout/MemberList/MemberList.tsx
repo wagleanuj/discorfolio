@@ -5,20 +5,13 @@ import { UserStatus } from '@/components/common/UserStatus';
 import { MemberCard } from '@/components/common/MemberCard';
 import { useResume } from '@/contexts/ResumeContext';
 import { useUser } from '@/contexts/UserContext';
+import { usePathname } from 'next/navigation';
+import { getBotByChannel } from '@/config/bots';
 
 const roles = [
-  { id: 'owner', name: 'Portfolio Owner', color: '#f47fff' },
+  { id: 'owner', name: 'Discorfolio Owner', color: '#f47fff' },
   { id: 'bot', name: 'Bot Squad', color: '#5865f2' },
 ];
-
-const botEmojis = {
-  'doorman': '👋',
-  'scribe': '💼',
-  'arsenal': '🎯',
-  'maker': '🚀',
-  'scholar': '🎓',
-  'postman': '📬'
-};
 
 interface MemberCardState {
   member: any;
@@ -29,6 +22,11 @@ const MemberList: FC = () => {
   const [activeCard, setActiveCard] = useState<MemberCardState | null>(null);
   const { resume } = useResume();
   const { user } = useUser();
+  const pathname = usePathname();
+  const currentChannelId = pathname.split('/').pop();
+
+  // Get the current channel's bot
+  const channelBot = currentChannelId ? getBotByChannel(currentChannelId) : null;
 
   const handleMemberClick = (member: any, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -48,7 +46,7 @@ const MemberList: FC = () => {
   };
 
   const members = [
-    // Owner - using visitor info for current user
+    // Owner
     {
       id: 'owner',
       name: resume.basics.name,
@@ -57,15 +55,15 @@ const MemberList: FC = () => {
       activity: 'Building awesome stuff',
       initials: resume.basics.name.split(' ').map(n => n[0]).join('')
     },
-    // Bots
-    ...Object.entries(botEmojis).map(([id, emoji]) => ({
-      id,
-      name: id.charAt(0).toUpperCase() + id.slice(1),
+    // Only include the bot for the current channel
+    ...(channelBot ? [{
+      id: channelBot.id,
+      name: channelBot.name,
       status: 'online' as const,
       role: roles[1],
-      activity: `Managing ${id} channel`,
-      emoji
-    }))
+      activity: `Managing ${channelBot.channel} channel`,
+      emoji: channelBot.emoji
+    }] : [])
   ];
 
   return (

@@ -16,6 +16,7 @@ interface MemberCardProps {
       name: string;
       color: string;
     };
+    initials?: string;
     activity?: string;
     emoji?: string;
   };
@@ -81,7 +82,7 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
                   <span className="text-4xl">{member.emoji}</span>
                 ) : (
                   <span className="text-white text-2xl font-medium">
-                    {member.name.slice(0, 2).toUpperCase()}
+                    {member.initials}
                   </span>
                 )}
               </div>

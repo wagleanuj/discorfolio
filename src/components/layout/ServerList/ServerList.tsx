@@ -23,10 +23,10 @@ const ServerList: FC = () => {
           )} />
         </div>
 
-        <Tooltip content="Portfolio" position="right">
+        <Tooltip content="Discorfolio" position="right">
           <div>
             <ServerIcon
-              name="Portfolio"
+              name="Discorfolio"
               image="/portfolio-icon.svg"
               selected={isHome}
               unread={false}

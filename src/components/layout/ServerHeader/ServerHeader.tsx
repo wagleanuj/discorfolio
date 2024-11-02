@@ -7,7 +7,7 @@ import { useResume } from '@/contexts/ResumeContext';
 const ServerHeader: FC = () => {
   const { resume } = useResume();
   const firstName = resume.basics.name.split(' ')[0];
-  const serverName = `${firstName}'s Portfolio`;
+  const serverName = `${firstName}'s Discorfolio`;
 
   return (
     <div className="h-12 px-4 flex items-center justify-between shadow-sm border-b border-discord-tertiary">
