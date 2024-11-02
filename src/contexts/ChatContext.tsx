@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, ReactElement } from 'react';
 
 interface MessageAuthor {
   name: string;
@@ -13,7 +13,7 @@ interface MessageAuthor {
 interface Message {
   id: string;
   role: 'user' | 'assistant' | 'system';
-  content: string;
+  content: string|ReactElement;
   timestamp: string;
   author?: MessageAuthor;
 }

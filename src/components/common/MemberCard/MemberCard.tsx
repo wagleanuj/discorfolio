@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 import { cn } from '@/lib/utils';
-import { Github, Linkedin, Mail, Phone } from 'lucide-react';
+import { Github, Globe, Linkedin, Mail, Phone } from 'lucide-react';
 import { useResume } from '@/contexts/ResumeContext';
 import { UserStatus } from '@/components/common/UserStatus';
 

@@ -25,6 +25,7 @@ interface Basics {
   email: string;
   phone: string;
   summary: string;
+  url?: string;
   location: {
     address: string;
     postalCode: string;
