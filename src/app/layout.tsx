@@ -30,9 +30,7 @@ export default async function RootLayout({
         <Suspense fallback={<LoadingScreen />}>
           <MinLoadingScreen>
             <Providers initialResume={resume}>
-              <WindowContainer>
-                {children}
-              </WindowContainer>
+              {children}
             </Providers>
           </MinLoadingScreen>
         </Suspense>

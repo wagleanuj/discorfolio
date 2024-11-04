@@ -1,1 +1,1 @@
-export { ResumeForm } from './ResumeForm'; 
+export { default } from './ResumeForm'; 

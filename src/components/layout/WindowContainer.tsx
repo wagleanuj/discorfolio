@@ -12,7 +12,7 @@ interface WindowContainerProps {
   children: React.ReactNode;
 }
 
-export const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
+const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
   const { 
     isWindowExpanded, 
     toggleWindowExpansion,
@@ -100,3 +100,4 @@ export const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
     </div>
   );
 };
+export default WindowContainer;
