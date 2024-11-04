@@ -44,4 +44,3 @@ next-env.d.ts
 
 # Chat logs
 /chat-logs/
-.data

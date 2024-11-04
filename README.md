@@ -1,40 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Discordfolio 🎮
 
-## Getting Started
+A Discord-inspired portfolio website that turns your resume into an interactive chat experience. Built with Next.js, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## Features ✨
 
+- **Discord-like Interface**: Familiar Discord UI with channels, members list, and chat
+- **Interactive Chat**: Talk to specialized AI bots about different aspects of the portfolio
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Real-time Interactions**: Smooth animations and transitions
+- **AI Integration**: Supports both OpenAI and local LLMs (Ollama)
+- **Resume-Driven**: Automatically generates content from a JSON resume
+
+## Getting Started 🚀
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- OpenAI API key (or Ollama for local LLMs)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/discordfolio.git
+cd discordfolio
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+3. Create a `.env` file based on `.env.example`:
+```env
+# LLM Provider Configuration
+LLM_PROVIDER=openai  # or 'ollama'
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-4-turbo-preview
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+# Other configurations...
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Add your resume:
+- Update `.data/resume.json` with your information
+- Follow the JSON Resume schema (resume-schema.json)
 
-## Learn More
+5. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Visit `http://localhost:3000` to see your portfolio!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## Structure 📁
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                  # Next.js app router
+├── components/          
+│   ├── common/          # Reusable components
+│   └── layout/          # Layout components
+├── contexts/            # React contexts
+├── lib/                 # Utilities
+└── types/              # TypeScript types
+```
 
-## Deploy on Vercel
+## Customization 🎨
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Themes
+- Modify `tailwind.config.js` to change colors and styling
+- Update Discord-like components in the components directory
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+### Bots
+- Each channel has a dedicated bot with specific knowledge
+- Customize bot personalities in `src/app/api/chat/route.ts`
+
+### Resume
+- Update `.data/resume.json` following the JSON Resume schema
+- Add new sections by modifying the channel structure
+
+## Tech Stack 💻
+
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [OpenAI API](https://openai.com/api/)
+- [Ollama](https://ollama.ai/)
+
+## Contributing 🤝
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License 📄
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments 🙏
+
+- Inspired by Discord's beautiful UI
+- Built with modern web technologies
+- Uses the JSON Resume schema
+
+## Support 💬
+
+For support, please open an issue in the GitHub repository.
