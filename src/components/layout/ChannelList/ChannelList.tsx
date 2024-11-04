@@ -7,6 +7,7 @@ import { ChevronRight, ChevronDown } from 'lucide-react';
 import { ServerHeader } from '@/components/layout/ServerHeader';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/contexts/UserContext';
+import { useUi } from '@/contexts/UiContext';
 
 interface Channel {
   id: string;
@@ -53,6 +54,7 @@ const ChannelList: FC = () => {
   const pathname = usePathname();
   const currentChannelId = pathname.split('/').pop();
   const { user } = useUser();
+  const { closeMobileNav } = useUi();
 
   const toggleCategory = (categoryId: string) => {
     setCollapsedCategories(prev => {
@@ -105,6 +107,7 @@ const ChannelList: FC = () => {
                       {/* Channel Link */}
                       <Link 
                         href={`/channel/${channel.id}`}
+                        onClick={closeMobileNav}
                         className={cn(
                           "flex items-center px-2 py-[6px] rounded-md cursor-pointer",
                           "transition-all duration-100 ease-out",

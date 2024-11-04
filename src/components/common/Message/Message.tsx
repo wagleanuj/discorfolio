@@ -24,9 +24,10 @@ export interface MessageProps {
   content: React.ReactNode;
   timestamp: string;
   author?: MessageAuthor;
+  pinned?: boolean;
 }
 
-export const Message: FC<MessageProps> = ({ content, timestamp, author }) => {
+export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }) => {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
 
@@ -69,60 +70,56 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author }) => {
   return (
     <div 
       className={cn(
-        "px-4 py-2 group relative flex items-start gap-4",
+        "px-4 py-2 group relative",
         "hover:bg-[#32353B]",
         "transition-colors duration-100"
       )}
       onMouseEnter={() => setShowReactionPicker(true)}
       onMouseLeave={() => setShowReactionPicker(false)}
     >
-      {/* Avatar */}
-      {author && (
-        <div className="flex-shrink-0 mt-0.5">
-          <div className={cn(
-            "w-10 h-10 rounded-full flex items-center justify-center",
-            "text-white font-medium text-lg",
-            author.bot ? "bg-discord-brand ring-2 ring-discord-primary" : "ring-2 ring-discord-primary"
-          )}
-          style={author.color ? { backgroundColor: author.color } : undefined}
-          >
-            {author.emoji ? (
-              <span className="text-2xl">{author.emoji}</span>
-            ) : author.initials ? (
-              <span className="text-base">{author.initials}</span>
-            ) : null}
-          </div>
-        </div>
-      )}
-
-      {/* Message Content */}
-      <div className="flex-1 min-w-0">
+      <div className="flex gap-4">
+        {/* Avatar */}
         {author && (
-          <div className="flex items-center gap-2 mb-1">
-            <span className={cn(
-              "font-medium",
-              author.bot ? "text-discord-brand" : "text-white"
+          <div className="flex-shrink-0">
+            <div className={cn(
+              "w-10 h-10 rounded-full flex items-center justify-center",
+              "bg-discord-brand text-white font-medium text-lg",
+              author.bot && "bg-discord-brand ring-2 ring-discord-primary"
             )}>
-              {author.name}
-            </span>
-            {author.bot && (
-              <span className="px-1 py-0.5 bg-discord-brand text-white text-xs rounded text-[10px] uppercase font-bold">
-                Bot
-              </span>
-            )}
-            <span className="text-discord-text-muted text-xs">
-              {formatTimestamp(timestamp)}
-            </span>
+              {author.emoji && (
+                <span className="text-2xl">{author.emoji}</span>
+              )}
+            </div>
           </div>
         )}
-        <div className="text-discord-text-primary break-words">
-          {content}
-        </div>
 
-        {/* Reactions */}
-        {reactions.length > 0 && (
-          <div className="mt-2 whitespace-nowrap">
-            <div className="inline-flex items-center gap-1">
+        {/* Message Content */}
+        <div className="flex-1 min-w-0 break-words">
+          {author && (
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <span className={cn(
+                "font-medium",
+                author.bot ? "text-discord-brand" : "text-white"
+              )}>
+                {author.name}
+              </span>
+              {author.bot && (
+                <span className="px-1 py-0.5 bg-discord-brand text-white text-xs rounded text-[10px] uppercase font-bold">
+                  Bot
+                </span>
+              )}
+              <span className="text-discord-text-muted text-xs">
+                {formatTimestamp(timestamp)}
+              </span>
+            </div>
+          )}
+          <div className="text-discord-text-primary">
+            {content}
+          </div>
+
+          {/* Reactions */}
+          {reactions.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
               {reactions.map((reaction) => (
                 <Reaction
                   key={reaction.emoji}
@@ -133,13 +130,17 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author }) => {
                 />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Reaction Picker */}
+      {/* Reaction Picker - Mobile Friendly */}
       {showReactionPicker && (
-        <div className="absolute right-4 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className={cn(
+          "absolute right-4 top-2",
+          "opacity-0 group-hover:opacity-100 transition-opacity",
+          "touch-none" // Prevents touch events from getting stuck
+        )}>
           <ReactionPicker onSelect={handleAddReaction} />
         </div>
       )}

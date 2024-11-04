@@ -1,34 +1,55 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface UiContextType {
-  isMembersListVisible: boolean;
   isWindowExpanded: boolean;
-  toggleMembersList: () => void;
   toggleWindowExpansion: () => void;
+  isMembersListVisible: boolean;
+  toggleMembersList: () => void;
+  isMobileNavOpen: boolean;
+  toggleMobileNav: () => void;
+  closeMobileNav: () => void;
 }
 
 const UiContext = createContext<UiContextType | undefined>(undefined);
 
 export function UiProvider({ children }: { children: ReactNode }) {
-  const [isMembersListVisible, setIsMembersListVisible] = useState(true);
-  const [isWindowExpanded, setIsWindowExpanded] = useState(false);
+  const [isWindowExpanded, setIsWindowExpanded] = useState<boolean | null>(null);
+  const [isMembersListVisible, setIsMembersListVisible] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  const toggleMembersList = () => {
-    setIsMembersListVisible(prev => !prev);
-  };
+  useEffect(() => {
+    const isMobile = window.innerWidth < 640;
+    setIsWindowExpanded(isMobile);
 
-  const toggleWindowExpansion = () => {
-    setIsWindowExpanded(prev => !prev);
-  };
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 640;
+      setIsWindowExpanded(isMobile);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleWindowExpansion = () => setIsWindowExpanded(prev => !prev);
+  const toggleMembersList = () => setIsMembersListVisible(prev => !prev);
+  const toggleMobileNav = () => setIsMobileNavOpen(prev => !prev);
+  const closeMobileNav = () => setIsMobileNavOpen(false);
+
+  if (isWindowExpanded === null) {
+    return null;
+  }
 
   return (
     <UiContext.Provider value={{ 
-      isMembersListVisible, 
-      isWindowExpanded,
-      toggleMembersList, 
-      toggleWindowExpansion 
+      isWindowExpanded: isWindowExpanded!, 
+      toggleWindowExpansion,
+      isMembersListVisible,
+      toggleMembersList,
+      isMobileNavOpen,
+      toggleMobileNav,
+      closeMobileNav
     }}>
       {children}
     </UiContext.Provider>
