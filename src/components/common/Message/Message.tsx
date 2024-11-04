@@ -24,10 +24,9 @@ export interface MessageProps {
   content: React.ReactNode;
   timestamp: string;
   author?: MessageAuthor;
-  pinned?: boolean;
 }
 
-export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }) => {
+export const Message: FC<MessageProps> = ({ content, timestamp, author }) => {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
 
@@ -78,16 +77,24 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }
       onMouseLeave={() => setShowReactionPicker(false)}
     >
       <div className="flex gap-4">
-        {/* Avatar */}
+        {/* Avatar - Now with proper color handling */}
         {author && (
-          <div className="flex-shrink-0">
-            <div className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center",
-              "bg-discord-brand text-white font-medium text-lg",
-              author.bot && "bg-discord-brand ring-2 ring-discord-primary"
-            )}>
-              {author.emoji && (
+          <div className="flex-shrink-0 w-10">
+            <div 
+              className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center",
+                "text-white font-medium text-lg",
+                "ring-2 ring-discord-primary",
+                author.bot && "bg-discord-brand"
+              )}
+              style={!author.bot && author.color ? { backgroundColor: author.color } : undefined}
+            >
+              {author.emoji ? (
                 <span className="text-2xl">{author.emoji}</span>
+              ) : author.initials ? (
+                <span className="text-base">{author.initials}</span>
+              ) : (
+                <span className="text-base">{author.name.slice(0, 2).toUpperCase()}</span>
               )}
             </div>
           </div>
@@ -134,12 +141,12 @@ export const Message: FC<MessageProps> = ({ content, timestamp, author, pinned }
         </div>
       </div>
 
-      {/* Reaction Picker - Mobile Friendly */}
+      {/* Reaction Picker */}
       {showReactionPicker && (
         <div className={cn(
           "absolute right-4 top-2",
           "opacity-0 group-hover:opacity-100 transition-opacity",
-          "touch-none" // Prevents touch events from getting stuck
+          "touch-none"
         )}>
           <ReactionPicker onSelect={handleAddReaction} />
         </div>
