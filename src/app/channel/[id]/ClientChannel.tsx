@@ -11,24 +11,21 @@ interface ClientChannelProps {
   channelId: string;
 }
 
-// Helper function to create a stable timestamp
-const createStableTimestamp = (date?: string) => {
-  if (date) {
-    return new Date(date).toISOString();
-  }
-  // Use a fixed timestamp for messages without dates
-  return '2024-01-01T00:00:00.000Z';
-};
-
 const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
   const { resume } = useResume();
+
+  // Helper function to get a safe timestamp
+  const getSafeTimestamp = (date?: string) => {
+    if (!date) return new Date().toISOString();
+    return new Date(date).toISOString();
+  };
 
   const generateChannelContent = (channelId: string): MessageProps[] | null => {
     switch (channelId) {
       case 'intro':
         return [{
           content: resume.basics.summary,
-          timestamp: createStableTimestamp(),
+          timestamp: getSafeTimestamp(),
           author: {
             name: 'Doorman',
             bot: true,
@@ -79,7 +76,7 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               )}
             </div>
           ),
-          timestamp: createStableTimestamp(job.startDate),
+          timestamp: getSafeTimestamp(job.startDate),
           author: {
             name: 'Scribe',
             bot: true,
@@ -115,8 +112,7 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: createStableTimestamp(),
-          pinned: true,
+          timestamp: getSafeTimestamp(),
           author: {
             name: 'Arsenal',
             bot: true,
@@ -172,7 +168,7 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: createStableTimestamp(project.startDate),
+          timestamp: getSafeTimestamp(project.startDate),
           author: {
             name: 'Maker',
             bot: true,
@@ -215,7 +211,7 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: createStableTimestamp(edu.startDate),
+          timestamp: getSafeTimestamp(edu.startDate),
           author: {
             name: 'Scholar',
             bot: true,
@@ -293,7 +289,7 @@ const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
               </div>
             </div>
           ),
-          timestamp: createStableTimestamp(),
+          timestamp: getSafeTimestamp(),
           author: {
             name: 'Postman',
             bot: true,

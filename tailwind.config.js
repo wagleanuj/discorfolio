@@ -58,10 +58,28 @@ module.exports = {
               '0%': { transform: 'scale(0.95)', opacity: '0' },
               '100%': { transform: 'scale(1)', opacity: '1' },
             },
-            gradient: {
+            'gradient': {
               '0%': { backgroundPosition: '0 0' },
               '100%': { backgroundPosition: '24px 24px' },
             },
+            'discord-spin': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            },
+            'pulse-slow': {
+              '0%, 100%': { transform: 'scale(1)', opacity: '0.8' },
+              '50%': { transform: 'scale(0.95)', opacity: '0.6' }
+            },
+            'float': {
+              '0%, 100%': { 
+                transform: 'rotate(var(--rotation)) translateY(-40px) scale(1)',
+                opacity: '0.6'
+              },
+              '50%': { 
+                transform: 'rotate(var(--rotation)) translateY(-50px) scale(1.2)',
+                opacity: '0.8'
+              }
+            }
           },
           animation: {
             'fade-in': 'fade-in 200ms ease-out',
@@ -69,11 +87,15 @@ module.exports = {
             'fade-up': 'fade-up 200ms ease-out',
             'scale-in': 'scale-in 200ms ease-out',
             'gradient': 'gradient 3s linear infinite',
+            'discord-spin': 'discord-spin 1s linear infinite',
+            'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
+            'float': 'float 3s ease-in-out infinite'
           },
           boxShadow: {
             'elevation-low': '0 1px 0 rgba(4,4,5,0.2),0 1.5px 0 rgba(6,6,7,0.05),0 2px 0 rgba(4,4,5,0.05)',
             'elevation-medium': '0 4px 4px rgba(0,0,0,0.16)',
             'elevation-high': '0 8px 16px rgba(0,0,0,0.24)',
+            'glow': '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(88, 101, 242, 0.3)'
           },
         },
       },

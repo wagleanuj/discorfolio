@@ -41,4 +41,6 @@ export const ServerIcon: FC<ServerIconProps> = ({
       )}
     </div>
   );
-}; 
+};
+
+export default ServerIcon; 

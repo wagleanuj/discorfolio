@@ -29,7 +29,6 @@ const ServerList: FC = () => {
               name="Discorfolio"
               image="/portfolio-icon.svg"
               selected={isHome}
-              unread={false}
             />
           </div>
         </Tooltip>
@@ -53,7 +52,6 @@ const ServerList: FC = () => {
             <ServerIcon
               name="GitHub"
               icon={<Github className="w-6 h-6 text-white" />}
-              unread={false}
             />
           </a>
         </Tooltip>
@@ -74,7 +72,6 @@ const ServerList: FC = () => {
             <ServerIcon
               name="LinkedIn"
               icon={<Linkedin className="w-6 h-6 text-white" />}
-              unread={false}
             />
           </a>
         </Tooltip>

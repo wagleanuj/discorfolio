@@ -8,14 +8,9 @@ import { usePathname } from 'next/navigation';
 import { getBotByChannel } from '@/config/bots';
 
 const roles = [
-  { id: 'owner', name: 'Discorfolio Owner', color: '#f47fff' },
+  { id: 'owner', name: 'Portfolio Owner', color: '#f47fff' },
   { id: 'bot', name: 'Bot Squad', color: '#5865f2' },
 ];
-
-interface MemberCardState {
-  position: { x: number; y: number };
-  member?: Member;
-}
 
 interface Member {
   id: string;
@@ -29,10 +24,14 @@ interface Member {
   activity?: string;
   emoji?: string;
   initials?: string;
-  joinedAt: string;
 }
 
-export const MemberList: FC = () => {
+interface MemberCardState {
+  member: Member;
+  position: { x: number; y: number };
+}
+
+const MemberList: FC = () => {
   const [activeCard, setActiveCard] = useState<MemberCardState | null>(null);
   const { resume } = useResume();
   const pathname = usePathname();
@@ -55,7 +54,14 @@ export const MemberList: FC = () => {
       position.y = windowHeight - cardHeight - 10;
     }
 
-    setActiveCard({ member: { ...member, joinedAt: new Date().toISOString() }, position });
+    // Add joinedAt when creating the card state
+    setActiveCard({ 
+      member: { 
+        ...member,
+        joinedAt: new Date().toISOString() 
+      } as Member, 
+      position 
+    });
   };
 
   const members = [
