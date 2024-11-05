@@ -7,12 +7,13 @@ import { FormData } from '@/components/builder/ResumeForm/types';
 import { useResume } from '@/contexts/ResumeContext';
 import { storageService } from '@/lib/services/storage';
 import { debounce } from 'lodash';
+import { Resume } from '@/types';
 
 const STORAGE_KEY = 'resume_draft';
 
 export default function BuilderPage() {
   const [resumeData, setResumeData] = useState<FormData>({});
-
+  const { resume, setResume } = useResume();
   // Load saved data on mount
   useEffect(() => {
     const loadSavedData = async () => {
@@ -32,6 +33,7 @@ export default function BuilderPage() {
   const handleDataChange = (data: FormData) => {
     setResumeData(data);
     saveData(data);
+    setResume(data as Resume);
   };
 
   return (

@@ -6,7 +6,7 @@ import { useResume } from '@/contexts/ResumeContext';
 
 const ServerHeader: FC = () => {
   const { resume } = useResume();
-  const firstName = resume.basics.name.split(' ')[0];
+  const firstName = resume?.basics?.name?.split(' ')[0];
   const serverName = `${firstName}'s Discorfolio`;
 
   return (

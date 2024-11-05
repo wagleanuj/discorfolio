@@ -18,35 +18,6 @@ export default function Preview({ data }: PreviewProps) {
     const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
     const [showSidebar, setShowSidebar] = useState(true);
 
-    const channels = [
-        {
-            id: 'about',
-            name: 'ABOUT ME',
-            channels: [
-                { id: 'intro', name: 'introduction', type: 'text' },
-                { id: 'contact', name: 'contact', type: 'text' },
-            ]
-        },
-        {
-            id: 'professional',
-            name: 'PROFESSIONAL',
-            channels: [
-                { id: 'exp', name: 'experience', type: 'text' },
-                { id: 'skills', name: 'skills', type: 'text' },
-                { id: 'edu', name: 'education', type: 'text' },
-            ]
-        },
-        {
-            id: 'portfolio',
-            name: 'PORTFOLIO',
-            channels: [
-                { id: 'projects', name: 'projects', type: 'text' },
-            ]
-        }
-    ];
-
-
-
     return (
         <div className="flex flex-col h-full">
             {/* View Toggle */}

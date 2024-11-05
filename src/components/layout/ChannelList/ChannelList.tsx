@@ -27,6 +27,7 @@ interface ChannelListProps {
   selectedChannel?: string;
   onChannelSelect?: (channelId: string) => void;
   isPreview?: boolean;
+  firstName: string;
 }
 
 const defaultChannelCategories: ChannelCategory[] = [
@@ -64,6 +65,7 @@ export default function ChannelList({
   const pathname = usePathname();
   const { setShowSidebar } = useUi();
 
+
   const toggleCategory = (categoryId: string) => {
     setCategories(prev => prev.map(cat =>
       cat.id === categoryId ? { ...cat, collapsed: !cat.collapsed } : cat
@@ -80,7 +82,7 @@ export default function ChannelList({
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1">
-        <ServerHeader />
+        <ServerHeader/>
         <div className="space-y-4 pt-4">
           {categories.map((category) => (
             <div key={category.id}>
@@ -116,7 +118,7 @@ const channelItemRenderer = (channel: Channel, isSelected: boolean, onClick: (ch
       href={`/channel/${channel.id}`}
       scroll={false}
       className={cn(
-        "flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] ml-2",
+        "flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] pl-2",
         isSelected ? "bg-[#42464D] text-white" : "text-gray-400"
       )}
       onClick={() => onClick(channel.id)}
@@ -132,7 +134,7 @@ const previewChannelItemRenderer = (channel: Channel, isSelected: boolean, onCli
     <button
       key={channel.id}
       onClick={() => onClick(channel.id)}
-      className={`w-full flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] ml-2 ${
+      className={`w-full flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] pl-4 ${
         isSelected ? 'bg-[#42464D] text-white' : 'text-gray-400'
       }`}
     >

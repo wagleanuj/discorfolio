@@ -1,23 +1,25 @@
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
-import { Resume } from '@/types/resume';
+import { createContext, useContext, ReactNode, useState } from 'react';
+import { Resume } from '@/types';
 
 interface ResumeContextType {
   resume: Resume;
+  setResume: (resume: Resume) => void;
 }
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
 export function ResumeProvider({
   children,
-  resume,
+  resume: initialResume,
 }: {
   children: ReactNode;
   resume: Resume;
 }) {
+  const [resume, setResume] = useState<Resume>(initialResume);
   return (
-    <ResumeContext.Provider value={{ resume }}>
+    <ResumeContext.Provider value={{ resume, setResume }}>
       {children}
     </ResumeContext.Provider>
   );

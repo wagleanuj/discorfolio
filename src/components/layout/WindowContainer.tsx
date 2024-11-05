@@ -7,6 +7,7 @@ import ServerList from './ServerList';
 import ChannelList from './ChannelList';
 import WindowControls from '../common/WindowControls/WindowControls';
 import { Menu } from 'lucide-react';
+import { useResume } from '@/contexts/ResumeContext';
 
 interface WindowContainerProps {
   children: React.ReactNode;
@@ -35,7 +36,8 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, [isWindowExpanded, toggleWindowExpansion]);
-  
+  const { resume } = useResume();
+  const firstName = resume.basics.name.split(' ')[0];
   return (
     <div className={cn(
       "h-full bg-gray-900 transition-all duration-300 ease-in-out",
@@ -74,7 +76,7 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
             )}
           >
             <ServerList />
-            <ChannelList />
+            <ChannelList firstName={firstName} />
           </aside>
          
 
@@ -93,7 +95,7 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
                 <ServerList />
               </div>
               <div className="w-60 bg-[#2f3136] flex-shrink-0">
-                <ChannelList /> 
+                <ChannelList firstName={firstName} /> 
               </div>
             </div>
             <main className="flex-1 bg-discord-primary overflow-hidden">

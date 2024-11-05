@@ -12,7 +12,7 @@ const ServerList: FC = () => {
   const isHome = pathname === '/' || pathname.startsWith('/channel/');
 
   return (
-    <div className="w-[72px] bg-discord-tertiary flex flex-col items-center pt-3 space-y-2">
+    <div className="bg-discord-tertiary flex flex-col items-center pt-3 space-y-2">
       {/* Home Button */}
       <div className="relative group">
         {/* Server Pill - Updated to stay visible when selected */}
