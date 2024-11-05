@@ -20,7 +20,7 @@ const getSafeTimestamp = (date?: string) => {
             author: {
               name: 'Doorman',
               emoji: '👋',
-              isBot: true
+              bot: true
             }
           }];
   
@@ -75,7 +75,7 @@ const getSafeTimestamp = (date?: string) => {
             author: {
               name: 'Scribe',
               emoji: '💼',
-              isBot: true
+              bot: true
             }
           }));
   
@@ -114,7 +114,7 @@ const getSafeTimestamp = (date?: string) => {
             author: {
               name: 'Arsenal',
               emoji: '🎯',
-              isBot: true
+              bot: true
             }
           }];
   
@@ -171,7 +171,7 @@ const getSafeTimestamp = (date?: string) => {
             author: {
               name: 'Maker',
               emoji: '🚀',
-              isBot: true
+              bot: true
             }
           }));
   
@@ -300,7 +300,7 @@ const getSafeTimestamp = (date?: string) => {
             author: {
               name: 'Postman',
               emoji: '📬',
-              isBot: true
+              bot: true
             }
           }];
   

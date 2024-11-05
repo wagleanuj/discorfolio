@@ -92,7 +92,6 @@ export default function Preview({ data }: PreviewProps) {
                         }`}>
                             <ChannelContent
                                 messages={generateChannelContent(data as Resume, selectedChannel) || []}
-                                isMobile={viewMode === 'mobile'}
                                 isPreview={true}
                                 channelName={selectedChannel}
                             />

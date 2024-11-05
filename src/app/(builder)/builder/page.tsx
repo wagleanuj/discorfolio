@@ -7,7 +7,7 @@ import { FormData } from '@/components/builder/ResumeForm/types';
 import { useResume } from '@/contexts/ResumeContext';
 import { storageService } from '@/lib/services/storage';
 import { debounce } from 'lodash';
-import { Resume } from '@/types';
+import { Resume } from '@/types/resume';
 
 const STORAGE_KEY = 'resume_draft';
 

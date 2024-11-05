@@ -36,8 +36,6 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, [isWindowExpanded, toggleWindowExpansion]);
-  const { resume } = useResume();
-  const firstName = resume.basics.name.split(' ')[0];
   return (
     <div className={cn(
       "h-full bg-gray-900 transition-all duration-300 ease-in-out",
@@ -76,7 +74,7 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
             )}
           >
             <ServerList />
-            <ChannelList firstName={firstName} />
+            <ChannelList />
           </aside>
 
 
@@ -95,7 +93,7 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
                 <ServerList />
               </div>
               <div className="w-60 bg-[#2f3136] flex-shrink-0">
-                <ChannelList firstName={firstName} />
+                <ChannelList  />
               </div>
             </div>
             <main className="flex-1 bg-discord-primary overflow-hidden">

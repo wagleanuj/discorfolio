@@ -29,7 +29,6 @@ interface ChannelListProps {
   selectedChannel?: string;
   onChannelSelect?: (channelId: string) => void;
   isPreview?: boolean;
-  firstName: string;
 }
 
 const defaultChannelCategories: ChannelCategory[] = [

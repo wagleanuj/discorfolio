@@ -13,7 +13,7 @@ import { useChat } from '@/contexts/ChatContext';
 interface ChannelContentProps {
   channelName: string;
   messages: MessageProps[];
-  isPreview: boolean;
+  isPreview?: boolean;
 }
 
 

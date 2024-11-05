@@ -80,4 +80,3 @@ export function useChat() {
   return context;
 }
 
-export type { Message, MessageAuthor };
