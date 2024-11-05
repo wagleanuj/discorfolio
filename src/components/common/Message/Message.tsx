@@ -1,158 +1,97 @@
 'use client';
 
-import { FC, useState } from 'react';
-import { Reaction } from '../Reaction/Reaction';
-import { ReactionPicker } from '../ReactionPicker/ReactionPicker';
-import { cn } from '@/lib/utils';
-import { formatDistanceToNow, format } from 'date-fns';
+import ReactMarkdown, { Components } from 'react-markdown';
 
-interface Reaction {
-  emoji: string;
-  count: number;
-  users: string[];
-}
-
-interface MessageAuthor {
+export interface MessageAuthor {
   name: string;
-  bot?: boolean;
+  avatar?: string;
   emoji?: string;
-  color?: string;
-  initials?: string;
+  isBot?: boolean;
+  bot?: boolean;
 }
 
 export interface MessageProps {
-  content: React.ReactNode;
+  id?: string;
+  author: MessageAuthor;
+  content: string | React.ReactNode;
   timestamp: string;
-  author?: MessageAuthor;
+  isMobile?: boolean;
+  role?: 'user' | 'assistant' | 'system';
 }
 
-export const Message: FC<MessageProps> = ({ content, timestamp, author }) => {
-  const [reactions, setReactions] = useState<Reaction[]>([]);
-  const [showReactionPicker, setShowReactionPicker] = useState(false);
-
-  const handleAddReaction = (emoji: string) => {
-    setReactions(prev => {
-      const existing = prev.find(r => r.emoji === emoji);
-      if (existing) {
-        if (existing.users.includes('currentUser')) {
-          return prev.map(r => 
-            r.emoji === emoji 
-              ? { ...r, count: r.count - 1, users: r.users.filter(u => u !== 'currentUser') }
-              : r
-          ).filter(r => r.count > 0);
-        }
-        return prev.map(r => 
-          r.emoji === emoji 
-            ? { ...r, count: r.count + 1, users: [...r.users, 'currentUser'] }
-            : r
-        );
-      }
-      return [...prev, { emoji, count: 1, users: ['currentUser'] }];
-    });
-  };
-
-  const formatTimestamp = (isoString: string) => {
-    const date = new Date(isoString);
-    const today = new Date();
-    
-    if (date.toDateString() === today.toDateString()) {
-      return format(date, 'h:mm a');
-    }
-    
-    if (Date.now() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
-      return formatDistanceToNow(date, { addSuffix: true });
-    }
-    
-    return format(date, 'MMM d, yyyy');
-  };
-
-  return (
-    <div 
-      className={cn(
-        "px-4 py-2 group relative",
-        "hover:bg-[#32353B]",
-        "transition-colors duration-100"
-      )}
-      onMouseEnter={() => setShowReactionPicker(true)}
-      onMouseLeave={() => setShowReactionPicker(false)}
+const MarkdownComponents: Partial<Components> = {
+  h1: ({ children }) => (
+    <h1 className="text-xl font-bold mt-2 mb-1">{children}</h1>
+  ),
+  h2: ({ children }) => (
+    <h2 className="text-lg font-bold mt-2 mb-1">{children}</h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="text-md font-bold mt-2 mb-1">{children}</h3>
+  ),
+  p: ({ children }) => (
+    <p className="mb-2">{children}</p>
+  ),
+  ul: ({ children }) => (
+    <ul className="list-disc ml-4 mb-2">{children}</ul>
+  ),
+  li: ({ children }) => (
+    <li className="mb-1">{children}</li>
+  ),
+  a: ({ href, children }) => (
+    <a 
+      href={href}
+      className="text-[#00b0f4] hover:underline" 
+      target="_blank"
+      rel="noopener noreferrer"
     >
-      <div className="flex gap-4">
-        {/* Avatar - Now with proper color handling */}
-        {author && (
-          <div className="flex-shrink-0 w-10">
-            <div 
-              className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center",
-                "text-white font-medium text-lg",
-                "ring-2 ring-discord-primary",
-                author.bot && "bg-discord-brand"
-              )}
-              style={!author.bot && author.color ? { backgroundColor: author.color } : undefined}
-            >
-              {author.emoji ? (
-                <span className="text-2xl">{author.emoji}</span>
-              ) : author.initials ? (
-                <span className="text-base">{author.initials}</span>
-              ) : (
-                <span className="text-base">{author.name.slice(0, 2).toUpperCase()}</span>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Message Content */}
-        <div className="flex-1 min-w-0 break-words">
-          {author && (
-            <div className="flex items-center gap-2 flex-wrap mb-1">
-              <span className={cn(
-                "font-medium",
-                author.bot ? "text-discord-brand" : "text-white"
-              )}>
-                {author.name}
-              </span>
-              {author.bot && (
-                <span className="px-1 py-0.5 bg-discord-brand text-white text-xs rounded text-[10px] uppercase font-bold">
-                  Bot
-                </span>
-              )}
-              <span className="text-discord-text-muted text-xs">
-                {formatTimestamp(timestamp)}
-              </span>
-            </div>
-          )}
-          <div className="text-discord-text-primary">
-            {content}
-          </div>
-
-          {/* Reactions */}
-          {reactions.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {reactions.map((reaction) => (
-                <Reaction
-                  key={reaction.emoji}
-                  emoji={reaction.emoji}
-                  count={reaction.count}
-                  isActive={reaction.users.includes('currentUser')}
-                  onClick={() => handleAddReaction(reaction.emoji)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Reaction Picker */}
-      {showReactionPicker && (
-        <div className={cn(
-          "absolute right-4 top-2",
-          "opacity-0 group-hover:opacity-100 transition-opacity",
-          "touch-none"
-        )}>
-          <ReactionPicker onSelect={handleAddReaction} />
-        </div>
-      )}
-    </div>
-  );
+      {children}
+    </a>
+  ),
+  strong: ({ children }) => (
+    <strong className="font-bold">{children}</strong>
+  ),
+  em: ({ children }) => (
+    <em className="italic">{children}</em>
+  ),
+  code: ({ children }) => (
+    <code className="bg-[#2f3136] px-1 py-0.5 rounded text-sm">{children}</code>
+  ),
 };
 
-export default Message;
+export default function Message({ author, content, timestamp, isMobile = false }: MessageProps) {
+  return (
+    <div className="mb-4">
+      <div className={`flex items-start gap-2 ${
+        isMobile ? 'text-sm' : 'text-base'
+      }`}>
+        <div className={`flex-shrink-0 rounded-full bg-[#5865f2] flex items-center justify-center ${
+          isMobile ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'
+        }`}>
+          <span className="flex items-center justify-center">
+            {author.emoji || author.avatar || '👤'}
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-white truncate">
+              {author.name}
+            </span>
+            <span className="flex-shrink-0 text-xs text-gray-400">
+              {new Date(timestamp).toLocaleDateString()}
+            </span>
+          </div>
+          <div className="text-gray-100 prose prose-invert max-w-none">
+            {typeof content === 'string' ? (
+              <ReactMarkdown components={MarkdownComponents}>
+                {content}
+              </ReactMarkdown>
+            ) : (
+              content
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

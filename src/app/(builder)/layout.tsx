@@ -3,18 +3,18 @@ import { ggSans } from "@/config/fonts";
 import { Suspense } from "react";
 
 export default function BuilderLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" className={`h-full ${ggSans.variable}`}>
-    <body className="h-full overflow-hidden font-sans">
-    <Suspense fallback={<LoadingScreen />}>
-              {children}
-        </Suspense>
-    </body>
-  </html>
-    
-  );
+    return (
+        <html lang="en" className={`h-full ${ggSans.variable}`}>
+            <body className="h-full overflow-hidden font-sans">
+                <Suspense fallback={<LoadingScreen />}>
+                    {children}
+                </Suspense>
+            </body>
+        </html>
+
+    );
 } 

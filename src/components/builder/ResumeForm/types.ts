@@ -16,4 +16,4 @@ export type FormData = {
   [key: string]: any;
 };
 
-export type FormValue = string | number | boolean | null | FormValue[] | { [key: string]: FormValue }; 
+export type FormValue = string | number | boolean | null | FormValue[] | { [key: string]: FormValue };

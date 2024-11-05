@@ -1,101 +1,53 @@
 'use client';
 
-import { FC } from 'react';
 import Message, { MessageProps } from '@/components/common/Message/Message';
-import { Users } from 'lucide-react';
-import { useUi } from '@/contexts/UiContext';
-import MemberList from '@/components/layout/MemberList/MemberList';
-import { cn } from '@/lib/utils';
-import { Tooltip } from '@/components/common/Tooltip/Tooltip';
-import { ChatInput } from '@/components/common/ChatInput';
-import { useChat } from '@/contexts/ChatContext';
+import ChatInput from '@/components/common/ChatInput';
+import WindowContainer from '@/components/layout/WindowContainer';
 
 interface ChannelContentProps {
-  channelName: string;
   messages: MessageProps[];
+  isMobile?: boolean;
+  isPreview?: boolean;
+  selectedChannel?: string;
+  channelName?: string;
 }
 
-const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initialMessages }) => {
-  const { isMembersListVisible, toggleMembersList } = useUi();
-  const { messages: chatMessages } = useChat();
-
-  // Combine initial messages with chat messages
-  const allMessages = [
-    ...initialMessages,
-    ...(chatMessages[channelName] || [])
-  ].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-
+export default function ChannelContent({
+  messages,
+  isMobile = false,
+  isPreview = false,
+  selectedChannel,
+  channelName
+}: ChannelContentProps) {
   return (
-    <div className="flex flex-1 h-full overflow-hidden">
-      <div className="flex flex-col flex-1 min-w-0">
-        {/* Channel Header */}
-        <div className="h-12 px-4 border-b border-discord-tertiary flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center">
-            <span className="text-xl text-discord-channel mr-2">#</span>
-            <h2 className="font-semibold text-channel-name truncate">{channelName}</h2>
-          </div>
-          
-          {/* Members Toggle Button */}
-          <Tooltip 
-            content={`${isMembersListVisible ? 'Hide' : 'Show'} Member List`}
-            position="bottom"
-          >
-            <button
-              onClick={toggleMembersList}
-              className={cn(
-                "p-2 rounded hover:bg-discord-hover transition-colors",
-                isMembersListVisible && "bg-discord-active"
-              )}
-            >
-              <Users 
-                size={20} 
-                className={cn(
-                  "text-discord-text-muted transition-colors",
-                  isMembersListVisible && "text-discord-text-primary"
-                )}
-              />
-            </button>
-          </Tooltip>
+    <div className="flex flex-col h-full">
+      {/* Channel Header */}
+      {!isPreview && channelName && (
+        <div className="border-b border-[#202225] p-4 flex-shrink-0">
+          <h2 className="text-lg font-semibold text-white">#{channelName}</h2>
         </div>
+      )}
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto min-h-0">
-          {allMessages.map((message, index) => (
-            <Message key={`${message.timestamp}-${index}`} {...message} />
-          ))}
-        </div>
-
-        {/* Chat Input */}
-        <div className="mt-2">
-          <ChatInput 
-            channelId={channelName}
-            placeholder={`Message #${channelName}`}
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {messages.map((message, index) => (
+          <Message
+            key={`${message.timestamp}-${index}`}
+            author={message.author}
+            content={message.content}
+            timestamp={message.timestamp}
+            isMobile={isMobile}
           />
+        ))}
+      </div>
+
+      {/* Chat Input */}
+      {!isPreview && (
+        <div className="p-4 border-t border-[#202225] flex-shrink-0">
+          <ChatInput channelId={selectedChannel || channelName || ''} />
         </div>
-      </div>
-
-      {/* Members List - Mobile Responsive */}
-      <div className={cn(
-        "fixed inset-y-0 right-0 w-60 lg:w-auto lg:relative lg:flex-shrink-0",
-        "transform transition-transform duration-300 ease-in-out",
-        "bg-discord-secondary lg:bg-transparent",
-        "z-20 lg:z-0",
-        isMembersListVisible 
-          ? "translate-x-0 lg:translate-x-0 lg:w-60" 
-          : "translate-x-full lg:w-0"
-      )}>
-        {isMembersListVisible && <MemberList />}
-      </div>
-
-      {/* Mobile Members List Backdrop */}
-      {isMembersListVisible && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-10 lg:hidden"
-          onClick={toggleMembersList}
-        />
       )}
     </div>
-  );
-};
 
-export default ChannelContent;
+  );
+}

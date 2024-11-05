@@ -124,9 +124,9 @@ export default function FormSection({
     );
   }
 
-  if (schema.type === 'array') {
+  if (schema.type === 'array' && schema.items) {
     // Handle arrays of primitive values
-    if (schema.items && schema.items.type !== 'object') {
+    if (schema.items.type !== 'object') {
       return (
         <div className="p-4 border border-[#202225] rounded-md mb-4">
           <div className="flex justify-between items-center mb-2">
@@ -181,7 +181,7 @@ export default function FormSection({
     }
 
     // Handle arrays of objects
-    if (schema.items?.type === 'object' && schema.items.properties) {
+    if (schema.items.type === 'object') {
       return (
         <div className="p-4 border border-[#202225] rounded-md mb-4">
           <div className="flex justify-between items-center mb-2">
@@ -223,7 +223,7 @@ export default function FormSection({
                       Remove
                     </button>
                   </div>
-                  {schema.items.properties && Object.entries(schema.items.properties).map(([propName, propSchema]) => (
+                  {schema.items?.properties && Object.entries(schema.items.properties).map(([propName, propSchema]) => (
                     <FormSection
                       key={propName}
                       name={propName}

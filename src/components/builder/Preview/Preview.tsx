@@ -3,8 +3,9 @@
 import { FormData } from '../ResumeForm/types';
 import ServerList from '@/components/layout/ServerList';
 import ChannelList from '@/components/layout/ChannelList';
-
+import ChannelContent from '@/components/layout/ChannelContent/ChannelContent';
 import { useState } from 'react';
+import { Smartphone, Monitor, ChevronLeft, Menu } from 'lucide-react';
 
 interface PreviewProps {
   data: FormData;
@@ -12,6 +13,8 @@ interface PreviewProps {
 
 export default function Preview({ data }: PreviewProps) {
   const [selectedChannel, setSelectedChannel] = useState('introduction');
+  const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [showSidebar, setShowSidebar] = useState(true);
 
   const channels = [
     { id: 'introduction', name: 'introduction', icon: '#' },
@@ -107,48 +110,99 @@ export default function Preview({ data }: PreviewProps) {
   };
 
   return (
-    <div className="flex h-full bg-[#36393f] rounded-lg overflow-hidden">
-      {/* Server List */}
-      <div className="w-[72px] bg-[#202225] flex-shrink-0">
-        <ServerList />
+    <div className="flex flex-col h-full">
+      {/* View Toggle */}
+      <div className="flex items-center justify-end gap-2 p-2 bg-[#2f3136] border-b border-[#202225]">
+        <button
+          onClick={() => setViewMode('desktop')}
+          className={`p-2 rounded ${
+            viewMode === 'desktop' 
+              ? 'bg-[#5865f2] text-white' 
+              : 'text-gray-400 hover:text-white'
+          }`}
+          title="Desktop view"
+        >
+          <Monitor size={20} />
+        </button>
+        <button
+          onClick={() => setViewMode('mobile')}
+          className={`p-2 rounded ${
+            viewMode === 'mobile' 
+              ? 'bg-[#5865f2] text-white' 
+              : 'text-gray-400 hover:text-white'
+          }`}
+          title="Mobile view"
+        >
+          <Smartphone size={20} />
+        </button>
       </div>
 
-      {/* Channel List */}
-      <div className="w-60 bg-[#2f3136] flex-shrink-0">
-        <ChannelList 
-          channels={channels}
-          selectedChannel={selectedChannel}
-          onChannelSelect={setSelectedChannel}
-          isPreview={true}
-        />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-
-          <div className="flex-1 overflow-y-auto p-4">
-            {getMessagesForChannel(selectedChannel).map((message: any) => (
-              <div key={message.id} className="mb-4">
-                <div className="flex items-start gap-2">
-                  <div className="w-10 h-10 rounded-full bg-[#5865f2] flex items-center justify-center">
-                    {message.author.avatar}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white">{message.author.name}</span>
-                      <span className="text-xs text-gray-400">
-                        {new Date(message.timestamp).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="text-gray-100 whitespace-pre-wrap">
-                      {message.content}
-                    </div>
-                  </div>
-                </div>
+      {/* Preview Container */}
+      <div className="flex-1 overflow-hidden bg-[#36393f] p-4">
+        <div 
+          className={`relative h-full mx-auto transition-all duration-300 ${
+            viewMode === 'mobile' 
+              ? 'w-[375px] shadow-lg rounded-[3rem] border-8 border-[#202225] overflow-hidden' 
+              : 'w-full rounded-lg'
+          }`}
+        >
+          <div className="flex h-full bg-[#36393f] overflow-hidden">
+            {/* Server List & Channel List Container */}
+            <div 
+              className={`flex h-full transition-all duration-300 ${
+                viewMode === 'mobile' 
+                  ? `absolute inset-0 ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`
+                  : 'relative'
+              }`}
+            >
+              {/* Server List */}
+              <div className={`bg-[#202225] flex-shrink-0 ${
+                viewMode === 'mobile' ? 'w-[48px]' : 'w-[72px]'
+              }`}>
+                <ServerList />
               </div>
-            ))}
-          </div>
 
+              {/* Channel List */}
+              <div className={`bg-[#2f3136] flex-shrink-0 ${
+                viewMode === 'mobile' ? 'w-[200px]' : 'w-60'
+              }`}>
+                <ChannelList 
+                  channels={channels}
+                  selectedChannel={selectedChannel}
+                  onChannelSelect={(id) => {
+                    setSelectedChannel(id);
+                    if (viewMode === 'mobile') {
+                      setShowSidebar(false);
+                    }
+                  }}
+                  isPreview={true}
+                />
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            {viewMode === 'mobile' && (
+              <button
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="absolute top-4 left-4 z-20 p-2 bg-[#202225] rounded text-gray-400 hover:text-white"
+              >
+                {showSidebar ? <ChevronLeft size={20} /> : <Menu size={20} />}
+              </button>
+            )}
+
+            {/* Main Content */}
+            <div className={`flex-1 flex flex-col ${
+              viewMode === 'mobile' && showSidebar ? 'opacity-50' : 'opacity-100'
+            }`}>
+              <ChannelContent
+                messages={getMessagesForChannel(selectedChannel)}
+                isMobile={viewMode === 'mobile'}
+                isPreview={true}
+                selectedChannel={selectedChannel}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
