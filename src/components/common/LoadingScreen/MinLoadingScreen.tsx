@@ -10,7 +10,7 @@ interface MinLoadingScreenProps {
 
 export const MinLoadingScreen: FC<MinLoadingScreenProps> = ({ 
   children, 
-  minLoadTime = 2000 // 2 seconds default
+  minLoadTime = 100 // 2 seconds default
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
