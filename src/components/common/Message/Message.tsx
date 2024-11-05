@@ -55,7 +55,6 @@ const MarkdownComponents: Partial<Components> = {
 };
 
 export default function Message({ author, content, timestamp, isMobile = false }: MessageProps) {
-  console.log(author.color);
   const getAvatarColor = (author: MessageAuthor) => {
     return `${author.color || '#5865f2'}`;
   };

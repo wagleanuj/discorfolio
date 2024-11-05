@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import Message, { MessageProps } from '@/components/common/Message/Message';
 import { Users } from 'lucide-react';
 import { useUi } from '@/contexts/UiContext';
@@ -16,9 +16,20 @@ interface ChannelContentProps {
   isPreview: boolean;
 }
 
+
 const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initialMessages, isPreview }) => {
   const { showMemberList: isMembersListVisible, setShowMemberList: toggleMembersList } = useUi();
   const { messages: chatMessages } = useChat();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
 
   // Combine initial messages with chat messages
   const allMessages = [
@@ -66,6 +77,7 @@ const ChannelContent: FC<ChannelContentProps> = ({ channelName, messages: initia
           {allMessages.map((message, index) => (
             <Message key={`${message.timestamp}-${index}`} {...message} />
           ))}
+          <div ref={messagesEndRef} /> {/* Scroll anchor */}
         </div>
 
         {/* Chat Input */}
