@@ -1,7 +1,7 @@
-import LoadingScreen from "@/components/common/LoadingScreen/LoadingScreen";
+
 import { ggSans } from "@/config/fonts";
-import { UiProvider } from "@/contexts/UiContext";
-import { Suspense } from "react";
+import { ChatProvider } from "@/contexts/ChatContext";
+
 
 export default function BuilderLayout({
     children,
@@ -11,9 +11,11 @@ export default function BuilderLayout({
     return (
         <html lang="en" className={`h-full ${ggSans.variable}`}>
             <body className="h-full overflow-hidden font-sans">
-                <Suspense fallback={<LoadingScreen />}>
-                    {children}
-                </Suspense>
+
+                    <ChatProvider>  
+                        {children}
+                    </ChatProvider>
+
             </body>
         </html>
 

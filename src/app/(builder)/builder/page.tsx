@@ -13,7 +13,7 @@ const STORAGE_KEY = 'resume_draft';
 
 export default function BuilderPage() {
   const [resumeData, setResumeData] = useState<FormData>({});
-  const { resume, setResume } = useResume();
+  const { setResume } = useResume();
   // Load saved data on mount
   useEffect(() => {
     const loadSavedData = async () => {

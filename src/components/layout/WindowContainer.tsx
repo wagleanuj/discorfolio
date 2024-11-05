@@ -14,12 +14,12 @@ interface WindowContainerProps {
 }
 
 const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
-  const { 
-    isWindowExpanded, 
+  const {
+    isWindowExpanded,
     toggleWindowExpansion,
-    isMobileNavOpen, 
+    isMobileNavOpen,
     toggleMobileNav,
-    closeMobileNav 
+    closeMobileNav
   } = useUi();
 
   // Force full screen on mobile
@@ -45,8 +45,8 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
     )}>
       <div className={cn(
         "h-full bg-discord-tertiary overflow-hidden transition-all duration-300 ease-in-out relative",
-        isWindowExpanded 
-          ? "w-full rounded-none" 
+        isWindowExpanded
+          ? "w-full rounded-none"
           : "max-w-7xl mx-auto rounded-xl shadow-2xl"
       )}>
         {/* Window Controls */}
@@ -64,11 +64,11 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
             <WindowControls />
           </div>
         </div>
-        
+
         {/* Main Content */}
         <div className="h-[calc(100%-32px)] relative">
           {/* Mobile Sidebar */}
-          <aside 
+          <aside
             className={cn(
               "absolute top-0 left-0 h-full bg-discord-secondary z-40",
               "flex transition-transform duration-300 lg:hidden",
@@ -78,24 +78,24 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
             <ServerList />
             <ChannelList firstName={firstName} />
           </aside>
-         
+
 
           {/* Mobile Backdrop */}
           {isMobileNavOpen && (
-            <div 
+            <div
               className="absolute inset-0 bg-black/50 z-30 lg:hidden"
               onClick={closeMobileNav}
             />
-          )} 
+          )}
 
           {/* Desktop Layout */}
           <div className="flex h-full">
             <div className="hidden lg:flex">
-              <div className="w-[72px] bg-[#202225] flex-shrink-0"> 
+              <div className="w-[72px] bg-[#202225] flex-shrink-0">
                 <ServerList />
               </div>
               <div className="w-60 bg-[#2f3136] flex-shrink-0">
-                <ChannelList firstName={firstName} /> 
+                <ChannelList firstName={firstName} />
               </div>
             </div>
             <main className="flex-1 bg-discord-primary overflow-hidden">

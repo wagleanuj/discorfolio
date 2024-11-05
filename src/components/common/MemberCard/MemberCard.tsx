@@ -28,7 +28,7 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
   const isOwner = member.role.id === 'owner';
 
   const findProfile = (network: string) => {
-    return resume.basics.profiles.find(
+    return resume?.basics?.profiles?.find(
       p => p.network.toLowerCase() === network.toLowerCase()
     );
   };

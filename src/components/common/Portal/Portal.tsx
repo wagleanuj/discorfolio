@@ -16,6 +16,5 @@ export default function Portal({ children }: PortalProps) {
   }, []);
 
   if (!mounted) return null;
-
   return createPortal(children, document.body);
 } 

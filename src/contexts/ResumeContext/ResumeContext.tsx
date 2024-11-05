@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode, useState } from 'react';
-import { Resume } from '@/types';
+import { Resume } from '@/types/resume';
 
 interface ResumeContextType {
   resume: Resume;

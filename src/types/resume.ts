@@ -154,9 +154,7 @@ export interface Resume {
   education: Education[];
   skills: Skill[];
   projects: Project[];
-  meta: {
-    lastModified: string;
-  };
+
 }
 
 export type {
