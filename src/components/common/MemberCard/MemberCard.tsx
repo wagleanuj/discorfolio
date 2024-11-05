@@ -36,20 +36,28 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
   const githubProfile = findProfile('github');
   const linkedinProfile = findProfile('linkedin');
 
+  // Calculate position to ensure card is visible
+  const adjustedPosition = {
+    x: Math.max(position.x, 0), // Ensure x is not negative
+    y: Math.max(position.y, 0), // Ensure y is not negative
+  };
+
   return (
-    <>
+    <div className="fixed inset-0 z-[100] overflow-hidden">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 z-50 bg-black/40 animate-fade-in"
+        className="absolute inset-0 bg-black/40 animate-fade-in"
         onClick={onClose}
       />
       
       {/* Card */}
       <div 
-        className="fixed z-50 w-80 bg-discord-primary rounded-lg shadow-lg overflow-hidden animate-slide-in"
+        className="absolute w-80 bg-discord-primary rounded-lg shadow-lg overflow-hidden animate-slide-in"
         style={{
-          top: `${position.y}px`,
-          left: `${position.x}px`,
+          top: `${adjustedPosition.y}px`,
+          left: `${adjustedPosition.x}px`,
+          maxHeight: 'calc(100vh - 40px)', // Prevent overflow
+          overflowY: 'auto'
         }}
       >
         {/* Banner with gradient background */}
@@ -193,7 +201,7 @@ export const MemberCard: FC<MemberCardProps> = ({ member, position, onClose }) =
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -6,6 +6,7 @@ import { MemberCard } from '@/components/common/MemberCard';
 import { useResume } from '@/contexts/ResumeContext';
 import { usePathname } from 'next/navigation';
 import { getBotByChannel } from '@/config/bots';
+import Portal from '@/components/common/Portal/Portal';
 
 const roles = [
   { id: 'owner', name: 'Portfolio Owner', color: '#f47fff' },
@@ -42,19 +43,21 @@ const MemberList: FC = () => {
 
   const handleMemberClick = (member: Member, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
+    const memberListWidth = 240; // Width of the member list
+    const cardWidth = 320; // Width of the member card
+    const padding = 16; // Padding between card and member list
     
+    // Position the card to the left of the member list
     const position = {
-      x: rect.left - 320,
-      y: rect.top
+      x: rect.left - cardWidth - padding,
+      y: Math.min(rect.top, window.innerHeight - 400) // Ensure card fits vertically
     };
 
-    const windowHeight = window.innerHeight;
-    const cardHeight = 250;
-    if (position.y + cardHeight > windowHeight) {
-      position.y = windowHeight - cardHeight - 10;
+    // If card would go off screen to the left, position it to the right of the member list
+    if (position.x < 0) {
+      position.x = rect.right + padding;
     }
 
-    // Add joinedAt when creating the card state
     setActiveCard({ 
       member: { 
         ...member,
@@ -145,11 +148,13 @@ const MemberList: FC = () => {
 
       {/* Member Card Portal */}
       {activeCard && (
-        <MemberCard
-          member={activeCard.member}
-          position={activeCard.position}
-          onClose={() => setActiveCard(null)}
-        />
+        <Portal>
+          <MemberCard
+            member={activeCard.member}
+            position={activeCard.position}
+            onClose={() => setActiveCard(null)}
+          />
+        </Portal>
       )}
     </div>
   );
