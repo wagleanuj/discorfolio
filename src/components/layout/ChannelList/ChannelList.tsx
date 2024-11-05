@@ -3,11 +3,13 @@
 import { FC, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, UserCircle2, Briefcase, Rocket, Wrench, GraduationCap, Phone } from 'lucide-react';
 import { ServerHeader } from '@/components/layout/ServerHeader';
 import { cn } from '@/lib/utils';
 import { useUi } from '@/contexts/UiContext';
 import UserInfo from '@/components/layout/UserInfo/UserInfo';
+import Portal from '@/components/common/Portal/Portal';
+import MemberCard from '@/components/common/MemberCard/MemberCard';
 
 interface Channel {
   id: string;
@@ -118,12 +120,12 @@ const channelItemRenderer = (channel: Channel, isSelected: boolean, onClick: (ch
       href={`/channel/${channel.id}`}
       scroll={false}
       className={cn(
-        "flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] pl-2",
+        "flex items-center gap-2 py-1 mx-2 px-2 rounded hover:bg-[#42464D]",
         isSelected ? "bg-[#42464D] text-white" : "text-gray-400"
       )}
       onClick={() => onClick(channel.id)}
     >
-      <span>#</span>
+      <span className="text-gray-400">{getChannelIcon(channel.id)}</span>
       <span>{channel.name}</span>
     </Link>
   );
@@ -134,12 +136,32 @@ const previewChannelItemRenderer = (channel: Channel, isSelected: boolean, onCli
     <button
       key={channel.id}
       onClick={() => onClick(channel.id)}
-      className={`w-full flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] pl-4 ${
+      className={`w-full flex items-center gap-2 py-1 mx-2 px-2 rounded hover:bg-[#42464D] ${
         isSelected ? 'bg-[#42464D] text-white' : 'text-gray-400'
       }`}
     >
-      <span>#</span>
+      <span className="text-gray-400">{getChannelIcon(channel.id)}</span>
       <span>{channel.name}</span>
     </button>
   );
+};
+
+// Get channel icon based on channel ID
+const getChannelIcon = (channelId: string) => {
+  switch (channelId) {
+    case 'intro':
+      return <UserCircle2 size={18} />;
+    case 'exp':
+      return <Briefcase size={18} />;
+    case 'projects':
+      return <Rocket size={18} />;
+    case 'skills':
+      return <Wrench size={18} />;
+    case 'edu':
+      return <GraduationCap size={18} />;
+    case 'contact':
+      return <Phone size={18} />;
+    default:
+      return '#';
+  }
 };
