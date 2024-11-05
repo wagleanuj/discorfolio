@@ -1,7 +1,4 @@
 'use client';
-
-import { Settings, Mic, Headphones } from 'lucide-react';
-import { useResume } from '@/contexts/ResumeContext';
 import { useUser } from '@/contexts/UserContext';
 
 interface UserInfoProps {

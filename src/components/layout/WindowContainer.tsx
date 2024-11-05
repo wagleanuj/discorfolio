@@ -7,7 +7,6 @@ import ServerList from './ServerList';
 import ChannelList from './ChannelList';
 import WindowControls from '../common/WindowControls/WindowControls';
 import { Menu } from 'lucide-react';
-import { useResume } from '@/contexts/ResumeContext';
 
 interface WindowContainerProps {
   children: React.ReactNode;

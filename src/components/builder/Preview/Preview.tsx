@@ -5,7 +5,7 @@ import ServerList from '@/components/layout/ServerList';
 import ChannelList from '@/components/layout/ChannelList';
 import ChannelContent from '@/components/layout/ChannelContent/ChannelContent';
 import { useState } from 'react';
-import { Smartphone, Monitor, ChevronLeft, Menu, ChevronRight } from 'lucide-react';
+import { Smartphone, Monitor, ChevronLeft, ChevronRight } from 'lucide-react';
 import { generateChannelContent } from '@/lib/utils/contentGenerator';
 import { Resume } from '@/types';
 
