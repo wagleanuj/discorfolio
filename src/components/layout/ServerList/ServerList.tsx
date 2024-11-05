@@ -3,7 +3,7 @@
 import { FC } from 'react';
 import { ServerIcon } from '@/components/common/ServerIcon';
 import { Tooltip } from '@/components/common/Tooltip';
-import { Github, Linkedin } from 'lucide-react';
+import { Briefcase, Github, Linkedin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
@@ -27,7 +27,7 @@ const ServerList: FC = () => {
           <div>
             <ServerIcon
               name="Discorfolio"
-              image="/portfolio-icon.svg"
+              icon={<Briefcase className="w-6 h-6 text-white" />}
               selected={isHome}
             />
           </div>

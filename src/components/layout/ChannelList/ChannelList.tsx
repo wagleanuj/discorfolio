@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { ServerHeader } from '@/components/layout/ServerHeader';
 import { cn } from '@/lib/utils';
+import { useUi } from '@/contexts/UiContext';
+import UserInfo from '@/components/layout/UserInfo/UserInfo';
 
 interface Channel {
   id: string;
@@ -20,10 +22,8 @@ interface ChannelCategory {
   collapsed?: boolean;
 }
 
-
-
 interface ChannelListProps {
-  channels?: (ChannelCategory)[];
+  channels?: ChannelCategory[];
   selectedChannel?: string;
   onChannelSelect?: (channelId: string) => void;
   isPreview?: boolean;
@@ -58,11 +58,11 @@ const defaultChannelCategories: ChannelCategory[] = [
 
 export default function ChannelList({
   onChannelSelect,
+  isPreview = false
 }: ChannelListProps) {
   const [categories, setCategories] = useState(defaultChannelCategories);
   const pathname = usePathname();
-
-
+  const { setShowSidebar } = useUi();
 
   const toggleCategory = (categoryId: string) => {
     setCategories(prev => prev.map(cat =>
@@ -70,59 +70,74 @@ export default function ChannelList({
     ));
   };
 
+  const handleChannelClick = (channelId: string) => {
+    if (!isPreview) {
+      setShowSidebar(false);
+    }
+    onChannelSelect?.(channelId);
+  };
+
   return (
-    <div className="p-3">
-      <ServerHeader />
-      <div className="space-y-4 pt-4">
-        {categories.map((category) => (
-          <div key={category.id}>
-            <button
-              onClick={() => toggleCategory(category.id)}
-              className="w-full flex items-center gap-2 px-2 py-1 text-gray-400 hover:text-gray-300"
-            >
-              {category.collapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
-              <span className="text-xs font-semibold">{category.name}</span>
-            </button>
-            {!category.collapsed && (
-              <div className="mt-1 space-y-0.5">
-                {category.channels.map((channel) => (
-                  onChannelSelect ?
-                    previewChannelItemRenderer(channel, pathname === `/channel/${channel.id}`, onChannelSelect) :
-                    channelItemRenderer(channel, pathname === `/channel/${channel.id}`) 
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+    <div className="flex flex-col h-full">
+      <div className="flex-1">
+        <ServerHeader />
+        <div className="space-y-4 pt-4">
+          {categories.map((category) => (
+            <div key={category.id}>
+              <button
+                onClick={() => toggleCategory(category.id)}
+                className="w-full flex items-center gap-2 px-2 py-1 text-gray-400 hover:text-gray-300"
+              >
+                {category.collapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
+                <span className="text-xs font-semibold">{category.name}</span>
+              </button>
+              {!category.collapsed && (
+                <div className="mt-1 space-y-0.5">
+                  {category.channels.map((channel) => (
+                    onChannelSelect ?
+                      previewChannelItemRenderer(channel, pathname === `/channel/${channel.id}`, handleChannelClick) :
+                      channelItemRenderer(channel, pathname === `/channel/${channel.id}`, handleChannelClick)
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
+      <UserInfo />
     </div>
   );
 }
 
-const channelItemRenderer = (channel: Channel, isSelected: boolean) => {
-  return <Link
-    key={channel.id}
-    href={`/channel/${channel.id}`}
-    scroll={false}
-    className={cn(
-      "flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] ml-2",
-      isSelected ? "bg-[#42464D] text-white" : "text-gray-400"
-    )}
-  >
-    <span>#</span>
-    <span>{channel.name}</span>
-  </Link>
-}
+const channelItemRenderer = (channel: Channel, isSelected: boolean, onClick: (channelId: string) => void) => {
+  return (
+    <Link
+      key={channel.id}
+      href={`/channel/${channel.id}`}
+      scroll={false}
+      className={cn(
+        "flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] ml-2",
+        isSelected ? "bg-[#42464D] text-white" : "text-gray-400"
+      )}
+      onClick={() => onClick(channel.id)}
+    >
+      <span>#</span>
+      <span>{channel.name}</span>
+    </Link>
+  );
+};
 
-const previewChannelItemRenderer = (channel: Channel, isSelected: boolean, onChannelSelect: (channelId: string) => void) => {
-  return <button
-    key={channel.id}
-    onClick={() => onChannelSelect?.(channel.id)}
-    className={`w-full flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] ml-2 ${
-      isSelected ? 'bg-[#42464D] text-white' : 'text-gray-400'
-    }`}
-  >
-    <span>#</span>
-    <span>{channel.name}</span>
-  </button>
-}
+const previewChannelItemRenderer = (channel: Channel, isSelected: boolean, onClick: (channelId: string) => void) => {
+  return (
+    <button
+      key={channel.id}
+      onClick={() => onClick(channel.id)}
+      className={`w-full flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D] ml-2 ${
+        isSelected ? 'bg-[#42464D] text-white' : 'text-gray-400'
+      }`}
+    >
+      <span>#</span>
+      <span>{channel.name}</span>
+    </button>
+  );
+};

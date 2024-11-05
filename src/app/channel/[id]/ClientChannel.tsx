@@ -1,25 +1,27 @@
 'use client';
 
-import { FC } from 'react';
-import { notFound } from 'next/navigation';
-import ChannelContent, { generateChannelContent } from '@/components/layout/ChannelContent/ChannelContent';
 import { useResume } from '@/contexts/ResumeContext';
+
+import ChannelContent from '@/components/layout/ChannelContent/ChannelContent';
+import { generateChannelContent } from '@/lib/utils/contentGenerator';
+
 interface ClientChannelProps {
   channelId: string;
 }
 
-
-const ClientChannel: FC<ClientChannelProps> = ({ channelId }) => {
+export default function ClientChannel({ channelId }: ClientChannelProps) {
   const { resume } = useResume();
 
+  if (!resume) {
+    return <div>Loading...</div>;
+  }
 
   const messages = generateChannelContent(resume, channelId);
 
-  if (!messages) {
-    notFound();
-  }
-
-  return <ChannelContent channelName={channelId} messages={messages} />;
-};
-
-export default ClientChannel;
+  return (
+    <ChannelContent 
+      channelName={channelId} 
+      messages={messages || []} 
+    />
+  );
+}

@@ -1,12 +1,14 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface UiContextType {
+  showMemberList: boolean;
+  setShowMemberList: (show: boolean) => void;
+  showSidebar: boolean;
+  setShowSidebar: (show: boolean) => void;
   isWindowExpanded: boolean;
   toggleWindowExpansion: () => void;
-  isMembersListVisible: boolean;
-  toggleMembersList: () => void;
   isMobileNavOpen: boolean;
   toggleMobileNav: () => void;
   closeMobileNav: () => void;
@@ -14,39 +16,24 @@ interface UiContextType {
 
 const UiContext = createContext<UiContextType | undefined>(undefined);
 
-export function UiProvider({ children }: { children: ReactNode }) {
-  const [isWindowExpanded, setIsWindowExpanded] = useState<boolean | null>(null);
-  const [isMembersListVisible, setIsMembersListVisible] = useState(false);
+export function UiProvider({ children }: { children: React.ReactNode }) {
+  const [showMemberList, setShowMemberList] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [isWindowExpanded, setIsWindowExpanded] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  useEffect(() => {
-    const isMobile = window.innerWidth < 640;
-    setIsWindowExpanded(isMobile);
-
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 640;
-      setIsWindowExpanded(isMobile);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const toggleWindowExpansion = () => setIsWindowExpanded(prev => !prev);
-  const toggleMembersList = () => setIsMembersListVisible(prev => !prev);
   const toggleMobileNav = () => setIsMobileNavOpen(prev => !prev);
   const closeMobileNav = () => setIsMobileNavOpen(false);
 
-  if (isWindowExpanded === null) {
-    return null;
-  }
-
   return (
     <UiContext.Provider value={{ 
-      isWindowExpanded: isWindowExpanded!, 
+      showMemberList, 
+      setShowMemberList,
+      showSidebar,
+      setShowSidebar,
+      isWindowExpanded,
       toggleWindowExpansion,
-      isMembersListVisible,
-      toggleMembersList,
       isMobileNavOpen,
       toggleMobileNav,
       closeMobileNav

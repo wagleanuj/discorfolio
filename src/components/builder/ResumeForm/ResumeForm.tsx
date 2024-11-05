@@ -1,17 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FormData } from './types';
 import { resumeSchema } from '@/lib/schema/resume.schema';
 import FormSection from './FormSection';
 import ResumeUpload from '../ResumeUpload/ResumeUpload';
 
 interface ResumeFormProps {
+  initialData?: FormData;
   onDataChange?: (data: FormData) => void;
 }
 
-const ResumeForm = ({ onDataChange }: ResumeFormProps) => {
-  const [formData, setFormData] = useState<FormData>({});
+const ResumeForm = ({ initialData, onDataChange }: ResumeFormProps) => {
+  const [formData, setFormData] = useState<FormData>(initialData || {});
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleChange = (path: string, value: any) => {
     setFormData(prevData => {
