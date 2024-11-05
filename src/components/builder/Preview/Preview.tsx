@@ -3,7 +3,7 @@
 import { FormData } from '../ResumeForm/types';
 import ServerList from '@/components/layout/ServerList';
 import ChannelList from '@/components/layout/ChannelList';
-import WindowContainer from '@/components/layout/WindowContainer';
+
 import { useState } from 'react';
 
 interface PreviewProps {
@@ -12,6 +12,15 @@ interface PreviewProps {
 
 export default function Preview({ data }: PreviewProps) {
   const [selectedChannel, setSelectedChannel] = useState('introduction');
+
+  const channels = [
+    { id: 'introduction', name: 'introduction', icon: '#' },
+    { id: 'experience', name: 'experience', icon: '#' },
+    { id: 'projects', name: 'projects', icon: '#' },
+    { id: 'skills', name: 'skills', icon: '#' },
+    { id: 'education', name: 'education', icon: '#' },
+    { id: 'contact', name: 'contact', icon: '#' }
+  ];
 
   // Convert resume data to messages format
   const getMessagesForChannel = (channelId: string) => {
@@ -97,15 +106,6 @@ export default function Preview({ data }: PreviewProps) {
     }
   };
 
-  const channels = [
-    { id: 'introduction', name: 'introduction', icon: '#' },
-    { id: 'experience', name: 'experience', icon: '#' },
-    { id: 'projects', name: 'projects', icon: '#' },
-    { id: 'skills', name: 'skills', icon: '#' },
-    { id: 'education', name: 'education', icon: '#' },
-    { id: 'contact', name: 'contact', icon: '#' }
-  ];
-
   return (
     <div className="flex h-full bg-[#36393f] rounded-lg overflow-hidden">
       {/* Server List */}
@@ -116,7 +116,7 @@ export default function Preview({ data }: PreviewProps) {
       {/* Channel List */}
       <div className="w-60 bg-[#2f3136] flex-shrink-0">
         <ChannelList 
-          channels={channels} 
+          channels={channels}
           selectedChannel={selectedChannel}
           onChannelSelect={setSelectedChannel}
           isPreview={true}
@@ -125,7 +125,7 @@ export default function Preview({ data }: PreviewProps) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <WindowContainer>
+
           <div className="flex-1 overflow-y-auto p-4">
             {getMessagesForChannel(selectedChannel).map((message: any) => (
               <div key={message.id} className="mb-4">
@@ -148,7 +148,7 @@ export default function Preview({ data }: PreviewProps) {
               </div>
             ))}
           </div>
-        </WindowContainer>
+
       </div>
     </div>
   );

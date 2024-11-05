@@ -68,7 +68,7 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
           {/* Mobile Sidebar */}
           <aside 
             className={cn(
-              "absolute top-0 left-0 h-full bg-discord-tertiary z-40",
+              "absolute top-0 left-0 h-full bg-discord-secondary z-40",
               "flex transition-transform duration-300 lg:hidden",
               isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
             )}
@@ -76,6 +76,7 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
             <ServerList />
             <ChannelList />
           </aside>
+         
 
           {/* Mobile Backdrop */}
           {isMobileNavOpen && (
@@ -83,13 +84,17 @@ const WindowContainer: FC<WindowContainerProps> = ({ children }) => {
               className="absolute inset-0 bg-black/50 z-30 lg:hidden"
               onClick={closeMobileNav}
             />
-          )}
+          )} 
 
           {/* Desktop Layout */}
           <div className="flex h-full">
             <div className="hidden lg:flex">
-              <ServerList />
-              <ChannelList />
+              <div className="w-[72px] bg-[#202225] flex-shrink-0"> 
+                <ServerList />
+              </div>
+              <div className="w-60 bg-[#2f3136] flex-shrink-0">
+                <ChannelList /> 
+              </div>
             </div>
             <main className="flex-1 bg-discord-primary overflow-hidden">
               {children}

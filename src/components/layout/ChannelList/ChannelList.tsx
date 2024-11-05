@@ -6,8 +6,6 @@ import { usePathname } from 'next/navigation';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { ServerHeader } from '@/components/layout/ServerHeader';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/contexts/UserContext';
-import { useUi } from '@/contexts/UiContext';
 
 interface Channel {
   id: string;
@@ -118,6 +116,7 @@ export default function ChannelList({
                   <Link
                     key={channel.id}
                     href={`/channel/${channel.id}`}
+                    scroll={false}
                     className={cn(
                       "flex items-center gap-2 px-2 py-1 rounded hover:bg-[#42464D]",
                       pathname === `/channel/${channel.id}` ? "bg-[#42464D] text-white" : "text-gray-400"

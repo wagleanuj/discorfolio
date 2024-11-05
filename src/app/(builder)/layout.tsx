@@ -1,11 +1,20 @@
+import LoadingScreen from "@/components/common/LoadingScreen/LoadingScreen";
+import { ggSans } from "@/config/fonts";
+import { Suspense } from "react";
+
 export default function BuilderLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#2f3136]">
-      {children}
-    </div>
+    <html lang="en" className={`h-full ${ggSans.variable}`}>
+    <body className="h-full overflow-hidden font-sans">
+    <Suspense fallback={<LoadingScreen />}>
+              {children}
+        </Suspense>
+    </body>
+  </html>
+    
   );
 } 

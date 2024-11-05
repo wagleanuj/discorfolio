@@ -3,10 +3,10 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { loadResume } from "@/lib/utils/resumeLoader";
 import { ggSans } from "@/config/fonts";
-import { WindowContainer } from "@/components/layout/WindowContainer";
 import { Suspense } from "react";
 import MinLoadingScreen from "@/components/common/LoadingScreen/MinLoadingScreen";
 import LoadingScreen from "@/components/common/LoadingScreen/LoadingScreen";
+import WindowContainer from "@/components/layout/WindowContainer";
 
 export async function generateMetadata(): Promise<Metadata> {
   const resume = await loadResume();
@@ -27,10 +27,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`h-full ${ggSans.variable}`}>
       <body className="h-full overflow-hidden font-sans">
-        <Suspense fallback={<LoadingScreen />}>
+      <Suspense fallback={<LoadingScreen />}>
           <MinLoadingScreen>
             <Providers initialResume={resume}>
-              {children}
+              <WindowContainer>
+                {children}
+              </WindowContainer>
             </Providers>
           </MinLoadingScreen>
         </Suspense>
