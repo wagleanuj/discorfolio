@@ -56,7 +56,7 @@ export const ChatInput: FC<ChatInputProps> = ({
       author: {
         name: user.name,
         color: user.color,
-        initials: user.initials
+        initials: user.initials,
       }
     };
 

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, ReactElement } from 'react';
 
-interface MessageAuthor {
+export interface MessageAuthor {
   name: string;
   bot?: boolean;
   emoji?: string;
@@ -10,12 +10,12 @@ interface MessageAuthor {
   initials?: string;
 }
 
-interface Message {
+export interface Message {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string|ReactElement;
   timestamp: string;
-  author?: MessageAuthor;
+  author: MessageAuthor;
 }
 
 interface ChatContextType {

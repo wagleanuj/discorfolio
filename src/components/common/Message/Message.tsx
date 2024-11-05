@@ -1,14 +1,9 @@
 'use client';
 
+import { MessageAuthor } from '@/contexts/ChatContext';
 import ReactMarkdown, { Components } from 'react-markdown';
 
-export interface MessageAuthor {
-  name: string;
-  avatar?: string;
-  emoji?: string;
-  isBot?: boolean;
-  bot?: boolean;
-}
+
 
 export interface MessageProps {
   id?: string;
@@ -39,9 +34,9 @@ const MarkdownComponents: Partial<Components> = {
     <li className="mb-1">{children}</li>
   ),
   a: ({ href, children }) => (
-    <a 
+    <a
       href={href}
-      className="text-[#00b0f4] hover:underline" 
+      className="text-[#00b0f4] hover:underline"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -60,16 +55,19 @@ const MarkdownComponents: Partial<Components> = {
 };
 
 export default function Message({ author, content, timestamp, isMobile = false }: MessageProps) {
+  console.log(author.color);
+  const getAvatarColor = (author: MessageAuthor) => {
+    return `${author.color || '#5865f2'}`;
+  };
+
   return (
     <div className="mb-4">
-      <div className={`flex items-start gap-2 ${
-        isMobile ? 'text-sm' : 'text-base'
-      }`}>
-        <div className={`flex-shrink-0 rounded-full bg-[#5865f2] flex items-center justify-center ${
-          isMobile ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'
+      <div className={`flex items-start gap-2 ${isMobile ? 'text-sm' : 'text-base'
         }`}>
-          <span className="flex items-center justify-center">
-            {author.emoji || author.avatar || '👤'}
+        <div className={`flex-shrink-0 rounded-full flex items-center justify-center ${isMobile ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'
+          } ${getAvatarColor(author)}`} style={{ backgroundColor: getAvatarColor(author)}}>
+          <span className="flex items-center justify-center text-white">
+            {author.emoji || author.initials}
           </span>
         </div>
         <div className="flex-1 min-w-0">
@@ -81,14 +79,8 @@ export default function Message({ author, content, timestamp, isMobile = false }
               {new Date(timestamp).toLocaleDateString()}
             </span>
           </div>
-          <div className="text-gray-100 prose prose-invert max-w-none">
-            {typeof content === 'string' ? (
-              <ReactMarkdown components={MarkdownComponents}>
-                {content}
-              </ReactMarkdown>
-            ) : (
-              content
-            )}
+          <div className="text-gray-100 whitespace-pre-wrap break-words">
+            {content}
           </div>
         </div>
       </div>
