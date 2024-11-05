@@ -5,205 +5,155 @@ import ServerList from '@/components/layout/ServerList';
 import ChannelList from '@/components/layout/ChannelList';
 import ChannelContent from '@/components/layout/ChannelContent/ChannelContent';
 import { useState } from 'react';
-import { Smartphone, Monitor, ChevronLeft, Menu } from 'lucide-react';
+import { Smartphone, Monitor, ChevronLeft, Menu, ChevronRight } from 'lucide-react';
+import { generateChannelContent } from '@/components/layout/ChannelContent';
+import { Resume } from '@/types';
 
 interface PreviewProps {
-  data: FormData;
+    data: FormData;
 }
 
 export default function Preview({ data }: PreviewProps) {
-  const [selectedChannel, setSelectedChannel] = useState('introduction');
-  const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
-  const [showSidebar, setShowSidebar] = useState(true);
+    const [selectedChannel, setSelectedChannel] = useState('introduction');
+    const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
+    const [showSidebar, setShowSidebar] = useState(true);
 
-  const channels = [
-    { id: 'introduction', name: 'introduction', icon: '#' },
-    { id: 'experience', name: 'experience', icon: '#' },
-    { id: 'projects', name: 'projects', icon: '#' },
-    { id: 'skills', name: 'skills', icon: '#' },
-    { id: 'education', name: 'education', icon: '#' },
-    { id: 'contact', name: 'contact', icon: '#' }
-  ];
+    const channels = [
+        {
+            id: 'about',
+            name: 'ABOUT ME',
+            channels: [
+                { id: 'intro', name: 'introduction', type: 'text' },
+                { id: 'contact', name: 'contact', type: 'text' },
+            ]
+        },
+        {
+            id: 'professional',
+            name: 'PROFESSIONAL',
+            channels: [
+                { id: 'exp', name: 'experience', type: 'text' },
+                { id: 'skills', name: 'skills', type: 'text' },
+                { id: 'edu', name: 'education', type: 'text' },
+            ]
+        },
+        {
+            id: 'portfolio',
+            name: 'PORTFOLIO',
+            channels: [
+                { id: 'projects', name: 'projects', type: 'text' },
+            ]
+        }
+    ];
 
-  // Convert resume data to messages format
-  const getMessagesForChannel = (channelId: string) => {
-    switch (channelId) {
-      case 'introduction':
-        return data.basics ? [
-          {
-            id: 'intro-1',
-            content: `# ${data.basics.name}\n${data.basics.label}\n\n${data.basics.summary}`,
-            author: {
-              name: '👋 Doorman',
-              avatar: '👋',
-              isBot: true
-            },
-            timestamp: new Date().toISOString()
-          }
-        ] : [];
 
-      case 'experience':
-        return data.work ? data.work.map((work: any, index: number) => ({
-          id: `work-${index}`,
-          content: `### ${work.position} at ${work.name}\n${work.startDate} - ${work.endDate}\n\n${work.summary}\n\n${work.highlights?.map((h: string) => `• ${h}`).join('\n') || ''}`,
-          author: {
-            name: '💼 Scribe',
-            avatar: '💼',
-            isBot: true
-          },
-          timestamp: new Date().toISOString()
-        })) : [];
 
-      case 'projects':
-        return data.projects ? data.projects.map((project: any, index: number) => ({
-          id: `project-${index}`,
-          content: `### ${project.name}\n${project.description}\n\n**Technologies:** ${project.keywords?.join(', ')}\n\n**Highlights:**\n${project.highlights?.map((h: string) => `• ${h}`).join('\n') || ''}`,
-          author: {
-            name: '🚀 Maker',
-            avatar: '🚀',
-            isBot: true
-          },
-          timestamp: new Date().toISOString()
-        })) : [];
-
-      case 'skills':
-        return data.skills ? data.skills.map((skill: any, index: number) => ({
-          id: `skill-${index}`,
-          content: `### ${skill.name}\n**Level:** ${skill.level}\n\n**Keywords:** ${skill.keywords?.join(', ')}`,
-          author: {
-            name: '🎯 Arsenal',
-            avatar: '🎯',
-            isBot: true
-          },
-          timestamp: new Date().toISOString()
-        })) : [];
-
-      case 'education':
-        return data.education ? data.education.map((edu: any, index: number) => ({
-          id: `edu-${index}`,
-          content: `### ${edu.studyType} in ${edu.area}\n${edu.institution}\n${edu.startDate} - ${edu.endDate}\n\n${edu.score ? `GPA: ${edu.score}\n\n` : ''}${edu.courses ? `**Courses:**\n${edu.courses.map((c: string) => `• ${c}`).join('\n')}` : ''}`,
-          author: {
-            name: '🎓 Scholar',
-            avatar: '🎓',
-            isBot: true
-          },
-          timestamp: new Date().toISOString()
-        })) : [];
-
-      case 'contact':
-        return data.basics ? [
-          {
-            id: 'contact-1',
-            content: `# Contact Information\n\n${data.basics.email ? `📧 Email: ${data.basics.email}\n` : ''}${data.basics.phone ? `📱 Phone: ${data.basics.phone}\n` : ''}${data.basics.url ? `🌐 Website: ${data.basics.url}\n` : ''}${data.basics.location ? `📍 Location: ${data.basics.location.city}, ${data.basics.location.region}, ${data.basics.location.countryCode}\n` : ''}\n\n${data.basics.profiles ? `### Social Profiles\n${data.basics.profiles.map((p: any) => `• [${p.network}](${p.url})`).join('\n')}` : ''}`,
-            author: {
-              name: '📬 Postman',
-              avatar: '📬',
-              isBot: true
-            },
-            timestamp: new Date().toISOString()
-          }
-        ] : [];
-
-      default:
-        return [];
-    }
-  };
-
-  return (
-    <div className="flex flex-col h-full">
-      {/* View Toggle */}
-      <div className="flex items-center justify-end gap-2 p-2 bg-[#2f3136] border-b border-[#202225]">
-        <button
-          onClick={() => setViewMode('desktop')}
-          className={`p-2 rounded ${
-            viewMode === 'desktop' 
-              ? 'bg-[#5865f2] text-white' 
-              : 'text-gray-400 hover:text-white'
-          }`}
-          title="Desktop view"
-        >
-          <Monitor size={20} />
-        </button>
-        <button
-          onClick={() => setViewMode('mobile')}
-          className={`p-2 rounded ${
-            viewMode === 'mobile' 
-              ? 'bg-[#5865f2] text-white' 
-              : 'text-gray-400 hover:text-white'
-          }`}
-          title="Mobile view"
-        >
-          <Smartphone size={20} />
-        </button>
-      </div>
-
-      {/* Preview Container */}
-      <div className="flex-1 overflow-hidden bg-[#36393f] p-4">
-        <div 
-          className={`relative h-full mx-auto transition-all duration-300 ${
-            viewMode === 'mobile' 
-              ? 'w-[375px] shadow-lg rounded-[3rem] border-8 border-[#202225] overflow-hidden' 
-              : 'w-full rounded-lg'
-          }`}
-        >
-          <div className="flex h-full bg-[#36393f] overflow-hidden">
-            {/* Server List & Channel List Container */}
-            <div 
-              className={`flex h-full transition-all duration-300 ${
-                viewMode === 'mobile' 
-                  ? `absolute inset-0 ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`
-                  : 'relative'
-              }`}
-            >
-              {/* Server List */}
-              <div className={`bg-[#202225] flex-shrink-0 ${
-                viewMode === 'mobile' ? 'w-[48px]' : 'w-[72px]'
-              }`}>
-                <ServerList />
-              </div>
-
-              {/* Channel List */}
-              <div className={`bg-[#2f3136] flex-shrink-0 ${
-                viewMode === 'mobile' ? 'w-[200px]' : 'w-60'
-              }`}>
-                <ChannelList 
-                  channels={channels}
-                  selectedChannel={selectedChannel}
-                  onChannelSelect={(id) => {
-                    setSelectedChannel(id);
-                    if (viewMode === 'mobile') {
-                      setShowSidebar(false);
-                    }
-                  }}
-                  isPreview={true}
-                />
-              </div>
+    return (
+        <div className="flex flex-col h-full">
+            {/* View Toggle */}
+            <div className="flex items-center justify-end gap-2 p-2 bg-[#2f3136] border-b border-[#202225]">
+                <button
+                    onClick={() => setViewMode('desktop')}
+                    className={`p-2 rounded ${viewMode === 'desktop'
+                            ? 'bg-[#5865f2] text-white'
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                    title="Desktop view"
+                >
+                    <Monitor size={20} />
+                </button>
+                <button
+                    onClick={() => setViewMode('mobile')}
+                    className={`p-2 rounded ${viewMode === 'mobile'
+                            ? 'bg-[#5865f2] text-white'
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                    title="Mobile view"
+                >
+                    <Smartphone size={20} />
+                </button>
             </div>
 
-            {/* Mobile Menu Button */}
-            {viewMode === 'mobile' && (
-              <button
-                onClick={() => setShowSidebar(!showSidebar)}
-                className="absolute top-4 left-4 z-20 p-2 bg-[#202225] rounded text-gray-400 hover:text-white"
-              >
-                {showSidebar ? <ChevronLeft size={20} /> : <Menu size={20} />}
-              </button>
-            )}
+            {/* Preview Container */}
+            <div className="flex-1 overflow-hidden bg-[#36393f] p-4">
+                <div
+                    className={`relative h-full mx-auto transition-all duration-300 shadow-2xl ${viewMode === 'mobile'
+                            ? 'w-[375px] rounded-[3rem] border-8 border-[#202225] overflow-hidden shadow-[0_0_60px_-15px_rgba(0,0,0,0.5)]'
+                            : 'w-full rounded-lg shadow-[0_0_30px_-10px_rgba(0,0,0,0.3)]'
+                        }`}
+                >
 
-            {/* Main Content */}
-            <div className={`flex-1 flex flex-col ${
-              viewMode === 'mobile' && showSidebar ? 'opacity-50' : 'opacity-100'
-            }`}>
-              <ChannelContent
-                messages={getMessagesForChannel(selectedChannel)}
-                isMobile={viewMode === 'mobile'}
-                isPreview={true}
-                selectedChannel={selectedChannel}
-              />
+
+                    <div
+                        className={`flex h-full ${viewMode === 'mobile'
+                                ? `absolute inset-0 z-30 transform ${showSidebar ? 'translate-x-0' : '-translate-x-[248px]'}`
+                                : 'relative'
+                            }`}
+                    >
+                        <div className={`bg-[#202225] h-full flex relative  ${viewMode === 'mobile' ? 'w-12' : 'w-[72px]'
+                            }`}>
+                            <ServerList />
+                        </div>
+
+                        <div className={`bg-[#2f3136] flex-shrink-0 relative  ${viewMode === 'mobile' ? 'w-[200px]' : 'w-60'
+                            }`}>
+                            <ChannelList
+                                selectedChannel={selectedChannel}
+                                onChannelSelect={(id) => {
+                                    setSelectedChannel(id);
+                                    if (viewMode === 'mobile') {
+                                        setShowSidebar(false);
+                                    }
+                                }}
+                                isPreview={true}
+                            />
+                             {/* Clickable Edge */}
+                        
+                        </div>
+
+                       
+                    </div>
+                    <div className="flex h-full bg-[#36393f] overflow-hidden">
+                        {/* Main Content */}
+                        <div className={`flex-1 flex flex-col ${viewMode === 'mobile' && showSidebar ? 'opacity-50' : 'opacity-100'
+                            }`}>
+                            <ChannelContent
+                                messages={generateChannelContent(data as Resume, selectedChannel) || []}
+                                isMobile={viewMode === 'mobile'}
+                                isPreview={true}
+                                selectedChannel={selectedChannel}
+                            />
+                        </div>
+                        {/* Clickable Edge when sidebar is closed */}
+                        {viewMode === 'mobile' && !showSidebar && (
+                            <div 
+                                className="z-40 absolute left-0 top-0 bottom-0 w-1 bg-[#202225] hover:bg-[#5865f2] transition-colors flex items-center"
+                            >
+                                <button
+                                    onClick={() => setShowSidebar(true)}
+                                    className="absolute -right-3 w-6 h-6 rounded-full bg-[#202225] hover:bg-[#5865f2] transition-colors flex items-center justify-center text-gray-400 hover:text-white"
+                                >
+                                    <ChevronRight size={14} />
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Channel List Edge Button */}
+                        {viewMode === 'mobile' && showSidebar && (
+                            <div 
+                                className="z-40 absolute right-0 top-0 bottom-0 w-1 bg-[#202225] hover:bg-[#5865f2] transition-colors flex items-center"
+                                style={{ left: '248px' }}
+                            >
+                                <button
+                                    onClick={() => setShowSidebar(false)}
+                                    className="absolute -right-3 w-6 h-6 rounded-full bg-[#202225] hover:bg-[#5865f2] transition-colors flex items-center justify-center text-gray-400 hover:text-white"
+                                >
+                                    <ChevronLeft size={14} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 } 

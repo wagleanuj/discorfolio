@@ -50,6 +50,7 @@ const ServerList: FC = () => {
             rel="noopener noreferrer"
           >
             <ServerIcon
+              
               name="GitHub"
               icon={<Github className="w-6 h-6 text-white" />}
             />
@@ -71,7 +72,7 @@ const ServerList: FC = () => {
           >
             <ServerIcon
               name="LinkedIn"
-              icon={<Linkedin className="w-6 h-6 text-white" />}
+              icon={<Linkedin className="w-4 h-4 text-white" />}
             />
           </a>
         </Tooltip>

@@ -20,13 +20,13 @@ export const ServerIcon: FC<ServerIconProps> = ({
   return (
     <div 
       className={cn(
-        "w-14 h-14 flex items-center justify-center transition-all duration-200",
+        "w-10 h-10 flex items-center justify-center transition-all duration-200",
         "hover:rounded-[16px] cursor-pointer",
         selected ? "rounded-[16px] bg-discord-brand" : "rounded-[24px] bg-discord-secondary hover:bg-discord-brand"
       )}
     >
       {icon ? icon : image ? (
-        <div className="w-10 h-10 relative">
+        <div className="w-5 h-5 relative">
           <Image
             src={image}
             alt={name}

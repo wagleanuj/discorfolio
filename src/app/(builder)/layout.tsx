@@ -1,5 +1,6 @@
 import LoadingScreen from "@/components/common/LoadingScreen/LoadingScreen";
 import { ggSans } from "@/config/fonts";
+import { UiProvider } from "@/contexts/UiContext";
 import { Suspense } from "react";
 
 export default function BuilderLayout({
