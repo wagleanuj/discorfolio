@@ -1,6 +1,6 @@
 import { MessageProps } from "@/components/common/Message/Message";
 import { Resume } from "@/types";
-import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin, Globe } from "lucide-react";
 import ReactMarkdown, { Components } from "react-markdown";
 
 const MarkdownComponents: Partial<Components> = {
@@ -277,6 +277,23 @@ export const generateChannelContent = (resume: Resume, channelId: string): Messa
                 </div>
 
                 <div className="grid gap-3">
+                  {/* Website */}
+                  {resume.basics?.email && (
+                    <a
+                      href={resume.basics.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 bg-discord-secondary/30 rounded-md hover:bg-discord-secondary/50 transition-colors group"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-discord-brand/20 flex items-center justify-center">
+                        <Globe className="w-5 h-5 text-discord-brand group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <div className="text-sm text-discord-text-muted">Website</div>
+                        <div className="text-discord-text-primary font-medium">{resume.basics.url}</div>
+                      </div>
+                    </a>
+                  )}
                   {/* Email */}
                   {resume.basics?.email && (
                     <a

@@ -9,6 +9,7 @@ export interface Resume {
       city: string;
       region: string;
     };
+    url?: string;
     profiles?: Array<{
       network: string;
       url: string;
