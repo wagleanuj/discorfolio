@@ -67,7 +67,7 @@ export default function MainPage() {
           {channels.map(channel => (
             <Link
               key={channel.id}
-              href={`/channel/${channel.id}`}
+              href={`main/channel/${channel.id}`}
               className="p-4 bg-discord-secondary rounded-lg hover:bg-discord-hover transition-colors group"
             >
               <div className="flex items-center text-discord-text-primary mb-2">
