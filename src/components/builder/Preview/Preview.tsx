@@ -11,24 +11,21 @@ import { Resume } from '@/types';
 
 interface PreviewProps {
     data: FormData;
+    viewMode: 'desktop' | 'mobile';
 }
 
-export default function Preview({ data }: PreviewProps) {
+export default function Preview({ data, viewMode }: PreviewProps) {
     const [selectedChannel, setSelectedChannel] = useState('introduction');
-    const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
     const [showSidebar, setShowSidebar] = useState(true);
 
     return (
         <div className="flex flex-col h-full">
-            {/* View Toggle */}
-           
-
             {/* Preview Container */}
             <div className="flex-1 overflow-hidden bg-[#36393f] p-4">
                 <div 
                     className={`relative h-full mx-auto transition-all duration-300 shadow-2xl ${
                         viewMode === 'mobile' 
-                            ? 'w-[375px] rounded-[3rem] border-8 border-[#202225] overflow-hidden shadow-[0_0_60px_-15px_rgba(0,0,0,0.5)]' 
+                            ? 'w-[375px] shadow-lg rounded-[3rem] border-8 border-[#202225] overflow-hidden shadow-[0_0_60px_-15px_rgba(0,0,0,0.5)]' 
                             : 'w-full rounded-lg shadow-[0_0_30px_-10px_rgba(0,0,0,0.3)]'
                     }`}
                 >

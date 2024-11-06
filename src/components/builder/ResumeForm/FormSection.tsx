@@ -15,12 +15,7 @@ interface FormSectionProps {
   onChange: (path: string, value: any) => void;
 }
 
-interface SortableItemProps {
-  id: string;
-  children: React.ReactNode;
-}
-
-const SortableItem = ({ id, children }: SortableItemProps) => {
+const SortableItem = memo(({ id, children }: { id: string; children: React.ReactNode }) => {
   const {
     attributes,
     listeners,
@@ -56,7 +51,9 @@ const SortableItem = ({ id, children }: SortableItemProps) => {
       </div>
     </div>
   );
-};
+});
+
+SortableItem.displayName = 'SortableItem';
 
 const FormSection = memo(function FormSection({ 
   name, 
@@ -77,19 +74,47 @@ const FormSection = memo(function FormSection({
     onChange(currentPath, e.target.value);
   }, [currentPath, onChange]);
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = useCallback((event: any) => {
     const { active, over } = event;
     
     if (over && active.id !== over.id) {
-      const oldIndex = parseInt(active.id.split('-').pop());
-      const newIndex = parseInt(over.id.split('-').pop());
+      const oldIndex = parseInt(active.id.split('-').pop() || '0');
+      const newIndex = parseInt(over.id.split('-').pop() || '0');
       
       if (!isNaN(oldIndex) && !isNaN(newIndex)) {
         const newValue = arrayMove(value || [], oldIndex, newIndex);
         onChange(currentPath, newValue);
       }
     }
-  };
+  }, [value, currentPath, onChange]);
+
+  // Handle primitive types
+  if (!schema.type || (!schema.properties && !schema.items)) {
+    return (
+      <div className="mb-4">
+        <label className="block mb-2">
+          <span className="text-sm font-medium text-gray-300 capitalize">{name}</span>
+          {schema.description && (
+            <span className="block text-xs text-gray-400 mt-0.5">
+              {schema.description}
+            </span>
+          )}
+        </label>
+        <input
+          type={
+            schema.type === 'string' && schema.format === 'uri' ? 'url' :
+            schema.type === 'string' && schema.format === 'email' ? 'email' :
+            schema.type === 'string' && schema.pattern?.includes('date') ? 'date' :
+            'text'
+          }
+          className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
+          value={value || ''}
+          onChange={handleChange}
+          pattern={schema.pattern}
+        />
+      </div>
+    );
+  }
 
   // Handle object type schemas
   if (schema.type === 'object' && schema.properties) {
@@ -116,7 +141,7 @@ const FormSection = memo(function FormSection({
   if (schema.type === 'array' && schema.items) {
     const arrayValue = value || [];
     return (
-      <div className="p-4 bg-gradient-to-r from-[#2f3136] to-[#36393f] rounded-lg mb-4 border border-[#202225] transition-all duration-200 hover:shadow-lg hover:border-[#5865f2]/20">
+      <div className="p-4 bg-gradient-to-r from-[#2f3136] to-[#36393f] rounded-lg mb-4 border border-[#202225]">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-white capitalize">{name}</h3>
           <Tooltip content={`Add new ${name}`}>
@@ -138,42 +163,47 @@ const FormSection = memo(function FormSection({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={arrayValue.map((_, index) => `${currentPath}-${index}`)}
+            items={arrayValue.map((_: unknown, index: number) => `${currentPath}-${index}`)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               {arrayValue.map((item: unknown, index: number) => (
                 <SortableItem key={`${currentPath}-${index}`} id={`${currentPath}-${index}`}>
-                  <div className="flex items-center gap-2 flex-1">
-                    <span className="text-gray-300 font-medium">{name} #{index + 1}</span>
-                    <Tooltip content="Remove item">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newValue = arrayValue.filter((_: unknown, i: number) => i !== index);
-                          onChange(currentPath, newValue);
-                        }}
-                        className="ml-auto p-1 text-gray-400 hover:text-red-400 rounded transition-all hover:scale-110 active:scale-95"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </Tooltip>
-                  </div>
-                  {schema.items?.type === 'object' && schema.items.properties ? (
-                    <div className="space-y-4 mt-4">
-                      {Object.entries(schema.items.properties).map(([propName, propSchema]) => (
-                        <FormSection
-                          key={propName}
-                          name={propName}
-                          schema={propSchema as SchemaProperty}
-                          path={`${currentPath}.${index}`}
-                          value={item?.[propName as keyof typeof item]}
-                          onChange={onChange}
-                        />
-                      ))}
+                  
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-4">
+                      <Tooltip content="Remove item">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newValue = arrayValue.filter((_: unknown, i: number) => i !== index);
+                            onChange(currentPath, newValue);
+                          }}
+                          className="p-1 text-gray-400 hover:text-red-400 rounded transition-all hover:scale-110 active:scale-95"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </Tooltip>
                     </div>
-                  ) : (
-                    <div className="mt-4">
+
+                    {/* Item Content */}
+                    {schema.items?.type === 'object' && schema.items.properties ? (
+                      <div className="space-y-4 bg-[#2f3136] rounded-md p-4">
+                        {Object.entries(schema.items.properties).map(([propName, propSchema]) => (
+                          <div key={propName} className="mb-4">
+                            <div className="bg-[#36393f] rounded-md p-3">
+                              <FormSection
+                                name={propName}
+                                schema={propSchema as SchemaProperty}
+                                path={`${currentPath}.${index}`}
+                                value={item?.[propName as keyof typeof item]}
+                                onChange={onChange}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
                       <input
                         type="text"
                         className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
@@ -184,8 +214,8 @@ const FormSection = memo(function FormSection({
                           onChange(currentPath, newValue);
                         }}
                       />
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </SortableItem>
               ))}
             </div>
@@ -194,32 +224,8 @@ const FormSection = memo(function FormSection({
       </div>
     );
   }
-
-  // Handle primitive types
-  return (
-    <div className="mb-4 group">
-      <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-[#5865f2]">
-        <span className="capitalize">{name}</span>
-        {schema.description && (
-          <span className="text-gray-400 text-xs ml-2 transition-colors group-focus-within:text-[#5865f2]/70">
-            ({schema.description})
-          </span>
-        )}
-      </label>
-      <input
-        type={
-          schema.type === 'string' && schema.format === 'uri' ? 'url' :
-          schema.type === 'string' && schema.format === 'email' ? 'email' :
-          schema.type === 'string' && schema.pattern?.includes('date') ? 'date' :
-          'text'
-        }
-        className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
-        value={value || ''}
-        onChange={handleChange}
-        pattern={schema.pattern}
-      />
-    </div>
-  );
 });
+
+FormSection.displayName = 'FormSection';
 
 export default FormSection; 

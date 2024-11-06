@@ -41,7 +41,7 @@ const ResumeForm = ({ initialData, onDataChange }: ResumeFormProps) => {
 
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[#36393f] text-gray-100 rounded-lg">
+    <div className="w-full transition-all duration-300 ease-in-out">
       <form className="space-y-6">
         {Object.entries(resumeSchema.properties).map(([name, schema]) => (
           <FormSection
