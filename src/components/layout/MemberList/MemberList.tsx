@@ -7,6 +7,7 @@ import { useResume } from '@/contexts/ResumeContext';
 import { usePathname } from 'next/navigation';
 import { getBotByChannel } from '@/config/bots';
 import Portal from '@/components/common/Portal/Portal';
+import { getAvatarColor, getBotColor } from '@/lib/utils/avatarColors';
 
 const roles = [
   { id: 'owner', name: 'Portfolio Owner', color: '#f47fff' },
@@ -46,7 +47,7 @@ const MemberList: FC = () => {
     const memberListWidth = 240; // Width of the member list
     const cardWidth = 320; // Width of the member card
     const padding = 16; // Padding between card and member list
-    
+
     // Position the card to the left of the member list
     const position = {
       x: rect.left - cardWidth - padding,
@@ -58,12 +59,12 @@ const MemberList: FC = () => {
       position.x = rect.right + padding;
     }
 
-    setActiveCard({ 
-      member: { 
+    setActiveCard({
+      member: {
         ...member,
-        joinedAt: new Date().toISOString() 
-      } as Member, 
-      position 
+        joinedAt: new Date().toISOString()
+      } as Member,
+      position
     });
   };
 
@@ -103,21 +104,22 @@ const MemberList: FC = () => {
 
           return (
             <div key={role.id}>
-              <h4 
+              <h4
                 className="text-xs font-semibold mb-1 px-2"
                 style={{ color: role.color }}
               >
                 {role.name} — {roleMembers.length}
               </h4>
               <div className="space-y-[2px]">
-                {roleMembers.map(member => (
-                  <div
+                {roleMembers.map(member => {
+                  const color = member.role.id === 'bot' ? getBotColor(member.name) : getAvatarColor(member.name);
+                  return <div
                     key={member.id}
                     className="flex items-center px-2 py-1 mx-2 rounded hover:bg-discord-hover group cursor-pointer"
                     onClick={(e) => handleMemberClick(member, e)}
                   >
                     <div className="relative flex-shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-discord-primary flex items-center justify-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center`} style={{ backgroundColor: color.hex}}>
                         {member.emoji ? (
                           <span className="text-xl">{member.emoji}</span>
                         ) : (
@@ -139,7 +141,7 @@ const MemberList: FC = () => {
                       )}
                     </div>
                   </div>
-                ))}
+                })}
               </div>
             </div>
           );

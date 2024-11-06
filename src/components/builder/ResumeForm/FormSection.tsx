@@ -1,24 +1,10 @@
 'use client';
 
+import { memo, useCallback } from 'react';
 import { SchemaProperty } from './types';
-import { useId } from 'react';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { GripVertical } from 'lucide-react';
 
 interface FormSectionProps {
   name: string;
@@ -33,7 +19,7 @@ interface SortableItemProps {
   children: React.ReactNode;
 }
 
-function SortableItem({ id, children }: SortableItemProps) {
+const SortableItem = ({ id, children }: SortableItemProps) => {
   const {
     attributes,
     listeners,
@@ -43,18 +29,27 @@ function SortableItem({ id, children }: SortableItemProps) {
   } = useSortable({ id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {children}
+    <div ref={setNodeRef} style={style} {...attributes}>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="p-1 text-gray-400 hover:text-gray-200 cursor-grab active:cursor-grabbing"
+          {...listeners}
+        >
+          <GripVertical size={16} />
+        </button>
+        {children}
+      </div>
     </div>
   );
-}
+};
 
-export default function FormSection({ 
+const FormSection = memo(function FormSection({ 
   name, 
   schema, 
   path = '', 
@@ -62,8 +57,6 @@ export default function FormSection({
   onChange 
 }: FormSectionProps) {
   const currentPath = path ? `${path}.${name}` : name;
-  const sectionId = useId();
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -71,39 +64,25 @@ export default function FormSection({
     })
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(currentPath, e.target.value);
+  }, [currentPath, onChange]);
+
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
     
     if (over && active.id !== over.id) {
-      const oldIndex = parseInt(active.id.toString().split('-').pop() || '0');
-      const newIndex = parseInt(over.id.toString().split('-').pop() || '0');
+      const oldIndex = parseInt(active.id.split('-').pop());
+      const newIndex = parseInt(over.id.split('-').pop());
       
-      if (!isNaN(oldIndex) && !isNaN(newIndex) && Array.isArray(value)) {
-        const newValue = arrayMove(value, oldIndex, newIndex);
+      if (!isNaN(oldIndex) && !isNaN(newIndex)) {
+        const newValue = arrayMove(value || [], oldIndex, newIndex);
         onChange(currentPath, newValue);
       }
     }
   };
 
-  const SortableList = ({ items, renderItem }: { items: any[], renderItem: (item: any, index: number) => React.ReactNode }) => (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={items.map((_, index) => `${sectionId}-${index}`)}
-        strategy={verticalListSortingStrategy}
-      >
-        {items.map((item, index) => (
-          <SortableItem key={`${sectionId}-${index}`} id={`${sectionId}-${index}`}>
-            {renderItem(item, index)}
-          </SortableItem>
-        ))}
-      </SortableContext>
-    </DndContext>
-  );
-
+  // Handle object type schemas
   if (schema.type === 'object' && schema.properties) {
     return (
       <div className="p-4 border border-[#202225] rounded-md mb-4">
@@ -124,124 +103,85 @@ export default function FormSection({
     );
   }
 
+  // Handle array type schemas
   if (schema.type === 'array' && schema.items) {
-    // Handle arrays of primitive values
-    if (schema.items.type !== 'object') {
-      return (
-        <div className="p-4 border border-[#202225] rounded-md mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-gray-200 capitalize">{name}</h3>
-            <button
-              type="button"
-              className="bg-[#5865f2] text-white px-3 py-1 rounded-md text-sm hover:bg-[#4752c4] transition-colors"
-              onClick={() => {
-                const newValue = [...(value || []), ''];
-                onChange(currentPath, newValue);
-              }}
-            >
-              Add {name}
-            </button>
-          </div>
-          {schema.description && (
-            <p className="text-gray-400 text-sm mb-4">{schema.description}</p>
-          )}
-          {Array.isArray(value) && (
-            <SortableList
-              items={value}
-              renderItem={(item, index) => (
-                <div className="flex items-center gap-2 bg-[#2f3136] p-2 rounded mb-2 cursor-move">
-                  <div className="text-gray-400 hover:text-gray-200 px-1">⋮⋮</div>
-                  <input
-                    type="text"
-                    className="flex-1 bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
-                    value={item || ''}
-                    onChange={(e) => {
-                      const newValue = [...value];
-                      newValue[index] = e.target.value;
-                      onChange(currentPath, newValue);
-                    }}
-                    placeholder={`Enter ${name} item`}
-                  />
-                  <button
-                    type="button"
-                    className="text-red-500 hover:text-red-400 transition-colors px-2"
-                    onClick={() => {
-                      const newValue = value.filter((_: any, i: number) => i !== index);
-                      onChange(currentPath, newValue);
-                    }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              )}
-            />
-          )}
+    const arrayValue = value || [];
+    return (
+      <div className="p-4 border border-[#202225] rounded-md mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold text-gray-200 capitalize">{name}</h3>
+          <button
+            type="button"
+            onClick={() => {
+              const newValue = [...arrayValue, schema.items?.type === 'object' ? {} : ''];
+              onChange(currentPath, newValue);
+            }}
+            className="px-3 py-1 bg-[#5865f2] text-white rounded-md text-sm hover:bg-[#4752c4] transition-colors"
+          >
+            Add {name}
+          </button>
         </div>
-      );
-    }
-
-    // Handle arrays of objects
-    if (schema.items.type === 'object') {
-      return (
-        <div className="p-4 border border-[#202225] rounded-md mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-gray-200 capitalize">{name}</h3>
-            <button
-              type="button"
-              className="bg-[#5865f2] text-white px-3 py-1 rounded-md text-sm hover:bg-[#4752c4] transition-colors"
-              onClick={() => {
-                const newValue = [...(value || []), {}];
-                onChange(currentPath, newValue);
-              }}
-            >
-              Add {name}
-            </button>
-          </div>
-          {schema.description && (
-            <p className="text-gray-400 text-sm mb-4">{schema.description}</p>
-          )}
-          {Array.isArray(value) && (
-            <SortableList
-              items={value}
-              renderItem={(item, index) => (
-                <div className="ml-4 mb-4 border-l-2 border-[#202225] pl-4 bg-[#2f3136] rounded p-4 cursor-move">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="text-gray-400 hover:text-gray-200 px-1">⋮⋮</div>
-                      <h4 className="text-md font-medium text-gray-300">
-                        {name} #{index + 1}
-                      </h4>
-                    </div>
-                    <button
-                      type="button"
-                      className="text-red-500 hover:text-red-400 transition-colors"
-                      onClick={() => {
-                        const newValue = value.filter((_: any, i: number) => i !== index);
-                        onChange(currentPath, newValue);
-                      }}
-                    >
-                      Remove
-                    </button>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={arrayValue.map((_: unknown, index: number) => `${currentPath}-${index}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-4">
+              {arrayValue.map((item: unknown, index: number) => (
+                <SortableItem key={`${currentPath}-${index}`} id={`${currentPath}-${index}`}>
+                  <div className="flex-1 relative pl-4 border-l-2 border-[#202225]">
+                    {schema.items?.type === 'object' && schema.items.properties ? (
+                      <div className="space-y-4">
+                        {Object.entries(schema.items.properties).map(([propName, propSchema]) => (
+                          <FormSection
+                            key={propName}
+                            name={propName}
+                            schema={propSchema as SchemaProperty}
+                            path={`${currentPath}.${index}`}
+                            value={item?.[propName as keyof typeof item]}
+                            onChange={onChange}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          className="flex-1 bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
+                          value={item as string || ''}
+                          onChange={(e) => {
+                            const newValue = [...arrayValue];
+                            newValue[index] = e.target.value;
+                            onChange(currentPath, newValue);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newValue = arrayValue.filter((_: unknown, i: number) => i !== index);
+                            onChange(currentPath, newValue);
+                          }}
+                          className="text-red-500 hover:text-red-400 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  {schema.items?.properties && Object.entries(schema.items.properties).map(([propName, propSchema]) => (
-                    <FormSection
-                      key={propName}
-                      name={propName}
-                      schema={propSchema as SchemaProperty}
-                      path={`${currentPath}.${index}`}
-                      value={item[propName]}
-                      onChange={onChange}
-                    />
-                  ))}
-                </div>
-              )}
-            />
-          )}
-        </div>
-      );
-    }
+                </SortableItem>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      </div>
+    );
   }
 
+  // Handle primitive types
   return (
     <div className="mb-4">
       <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -255,31 +195,33 @@ export default function FormSection({
           type="url"
           className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
           value={value || ''}
-          onChange={(e) => onChange(currentPath, e.target.value)}
+          onChange={handleChange}
         />
       ) : schema.type === 'string' && schema.format === 'email' ? (
         <input
           type="email"
           className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
           value={value || ''}
-          onChange={(e) => onChange(currentPath, e.target.value)}
+          onChange={handleChange}
         />
       ) : schema.type === 'string' && schema.pattern?.includes('date') ? (
         <input
           type="date"
           className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
           value={value || ''}
-          onChange={(e) => onChange(currentPath, e.target.value)}
+          onChange={handleChange}
         />
       ) : (
         <input
           type="text"
           className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
           value={value || ''}
-          onChange={(e) => onChange(currentPath, e.target.value)}
+          onChange={handleChange}
           pattern={schema.pattern}
         />
       )}
     </div>
   );
-} 
+});
+
+export default FormSection; 

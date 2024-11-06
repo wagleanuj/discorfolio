@@ -9,15 +9,8 @@ export default function BuilderLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className={`h-full ${ggSans.variable}`}>
-            <body className="h-full overflow-hidden font-sans">
-
-                    <ChatProvider>  
-                        {children}
-                    </ChatProvider>
-
-            </body>
-        </html>
-
+        <ChatProvider>
+            {children}
+        </ChatProvider>
     );
 } 

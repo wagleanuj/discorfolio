@@ -2,6 +2,7 @@
 
 import { MessageAuthor } from '@/contexts/ChatContext';
 import ReactMarkdown, { Components } from 'react-markdown';
+import { getAvatarColor, getBotColor } from '@/lib/utils/avatarColors';
 
 
 
@@ -55,16 +56,13 @@ const MarkdownComponents: Partial<Components> = {
 };
 
 export default function Message({ author, content, timestamp, isMobile = false }: MessageProps) {
-  const getAvatarColor = (author: MessageAuthor) => {
-    return `${author.color || '#5865f2'}`;
-  };
-
+  const color = author.bot ? getBotColor(author.name) : getAvatarColor(author.name);
   return (
     <div className="mb-4">
       <div className={`flex items-start gap-2 ${isMobile ? 'text-sm' : 'text-base'
         }`}>
         <div className={`flex-shrink-0 rounded-full flex items-center justify-center ${isMobile ? 'w-8 h-8 text-base' : 'w-10 h-10 text-xl'
-          } ${getAvatarColor(author)}`} style={{ backgroundColor: getAvatarColor(author)}}>
+          } ${color.color}`} style={{ backgroundColor: color.hex}}>
           <span className="flex items-center justify-center text-white">
             {author.emoji || author.initials}
           </span>

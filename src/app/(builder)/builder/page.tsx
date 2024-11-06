@@ -1,41 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import ResumeForm from '@/components/builder/ResumeForm/ResumeForm';
 import Preview from '@/components/builder/Preview/Preview';
 import { FormData } from '@/components/builder/ResumeForm/types';
-import { useResume } from '@/contexts/ResumeContext';
-import { storageService } from '@/lib/services/storage';
-import { debounce } from 'lodash';
-import { Resume } from '@/types/resume';
-
-const STORAGE_KEY = 'resume_draft';
 
 export default function BuilderPage() {
   const [resumeData, setResumeData] = useState<FormData>({});
-  const { setResume } = useResume();
-  // Load saved data on mount
-  useEffect(() => {
-    const loadSavedData = async () => {
-      const savedData = await storageService.load(STORAGE_KEY);
-      if (savedData) {
-        setResumeData(savedData);
-      }
-    };
-    loadSavedData();
-  }, []);
 
-  // Debounced save function
-  const saveData = debounce(async (data: FormData) => {
-    await storageService.save(STORAGE_KEY, data);
-    setResume(data as Resume);
-
-  }, 1000); // Save after 1 second of no changes
-
-  const handleDataChange = (data: FormData) => {
+  const handleDataChange = useCallback((data: FormData) => {
     setResumeData(data);
-    saveData(data);
-  };
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#2f3136] p-4">
