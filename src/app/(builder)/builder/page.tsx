@@ -28,12 +28,13 @@ export default function BuilderPage() {
   // Debounced save function
   const saveData = debounce(async (data: FormData) => {
     await storageService.save(STORAGE_KEY, data);
+    setResume(data as Resume);
+
   }, 1000); // Save after 1 second of no changes
 
   const handleDataChange = (data: FormData) => {
     setResumeData(data);
     saveData(data);
-    setResume(data as Resume);
   };
 
   return (

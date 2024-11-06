@@ -22,20 +22,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const resume = await loadResume();
-  
+  const resume = await loadResume()
   return (
     <html lang="en" className={`h-full ${ggSans.variable}`}>
       <body className="h-full overflow-hidden font-sans">
-      <Suspense fallback={<LoadingScreen />}>
-          <MinLoadingScreen>
-            <Providers initialResume={resume}>
-              <WindowContainer>
-                {children}
-              </WindowContainer>
-            </Providers>
-          </MinLoadingScreen>
-        </Suspense>
+        <Providers initialResume={resume}>
+          <Suspense fallback={<LoadingScreen />}>
+            {children}
+          </Suspense>
+        </Providers>
       </body>
     </html>
   );
