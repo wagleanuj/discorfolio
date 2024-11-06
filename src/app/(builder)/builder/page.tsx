@@ -6,17 +6,20 @@ import Preview from '@/components/builder/Preview/Preview';
 import Toolbar from '@/components/builder/Toolbar/Toolbar';
 import ResizableDivider from '@/components/common/ResizableDivider/ResizableDivider';
 import { FormData } from '@/components/builder/ResumeForm/types';
+import { Resume } from '@/types/resume';
+import { useResume } from '@/contexts/ResumeContext';
 
 export default function BuilderPage() {
   const [resumeData, setResumeData] = useState<FormData>({});
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
   const [previewVisible, setPreviewVisible] = useState(true);
   const [formWidth, setFormWidth] = useState(50); // percentage
-
+  const { resume, setResume } = useResume()
   const handleDataChange = useCallback((data: FormData) => {
     setResumeData(data);
+    setResume(data as Resume)
   }, []);
-
+  
   const handleDownload = () => {
     const jsonString = JSON.stringify(resumeData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -35,6 +38,7 @@ export default function BuilderPage() {
       const text = await file.text();
       const json = JSON.parse(text);
       setResumeData(json);
+      setResume(json as Resume)
     } catch (err) {
       console.error('Error parsing JSON:', err);
     }
@@ -50,50 +54,50 @@ export default function BuilderPage() {
         previewVisible={previewVisible}
         onPreviewToggle={() => setPreviewVisible(!previewVisible)}
       />
-      
+
       <div className="flex-1 p-4 min-h-0">
         <div id="resizable-container" className="h-full max-w-[1800px] mx-auto relative flex">
           {/* Form Section */}
-          <div 
+          <div
             className="h-full transition-all duration-300 ease-in-out"
             style={{ width: previewVisible ? `${formWidth}%` : '100%' }}
           >
-            <div 
+            <div
               className={`
                 h-full overflow-y-auto
                 transition-all duration-300 ease-in-out
                 ${previewVisible ? '' : 'max-w-4xl mx-auto'}
               `}
             >
-              <ResumeForm 
+              <ResumeForm
                 initialData={resumeData}
-                onDataChange={handleDataChange} 
+                onDataChange={handleDataChange}
               />
             </div>
           </div>
 
           {/* Resizable Divider */}
           {previewVisible && (
-            <ResizableDivider 
+            <ResizableDivider
               onResize={setFormWidth}
               isVisible={previewVisible}
             />
           )}
 
           {/* Preview Section */}
-          <div 
+          <div
             className={`
               h-full
               transition-all duration-300 ease-in-out
-              ${previewVisible 
-                ? 'opacity-100' 
+              ${previewVisible
+                ? 'opacity-100'
                 : 'opacity-0 w-0'
               }
             `}
             style={{ width: previewVisible ? `${100 - formWidth}%` : 0 }}
           >
             <div className="h-full">
-              <Preview 
+              <Preview
                 data={resumeData}
                 viewMode={viewMode}
               />
