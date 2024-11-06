@@ -23,8 +23,8 @@ A Discord-inspired portfolio website that turns your resume into an interactive 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/discordfolio.git
-cd discordfolio
+git clone https://github.com/wagleanuj/discorfolio.git
+cd discorfolio
 ```
 
 2. Install dependencies:

@@ -4,7 +4,8 @@ import { memo, useCallback } from 'react';
 import { SchemaProperty } from './types';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import Tooltip from '@/components/common/Tooltip/Tooltip';
 
 interface FormSectionProps {
   name: string;
@@ -26,24 +27,32 @@ const SortableItem = ({ id, children }: SortableItemProps) => {
     setNodeRef,
     transform,
     transition,
+    isDragging
   } = useSortable({ id });
 
   const style = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
+    zIndex: isDragging ? 1 : undefined,
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="p-1 text-gray-400 hover:text-gray-200 cursor-grab active:cursor-grabbing"
-          {...listeners}
-        >
-          <GripVertical size={16} />
-        </button>
-        {children}
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      {...attributes}
+      className={`transition-all duration-200 ${isDragging ? 'opacity-75 scale-[1.02]' : ''}`}
+    >
+      <div className="flex-1 relative pl-4 border-l-2 border-[#202225] bg-[#2f3136] rounded-md p-3 group transition-all duration-200 hover:bg-[#36393f]">
+        <div className="flex items-center gap-2 mb-2">
+          <div
+            {...listeners}
+            className="p-1 text-gray-400 hover:text-gray-200 cursor-grab active:cursor-grabbing rounded transition-colors"
+          >
+            <GripVertical size={16} className="transition-transform group-hover:scale-110" />
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -85,8 +94,8 @@ const FormSection = memo(function FormSection({
   // Handle object type schemas
   if (schema.type === 'object' && schema.properties) {
     return (
-      <div className="p-4 border border-[#202225] rounded-md mb-4">
-        <h3 className="text-lg font-semibold mb-2 text-gray-200 capitalize">{name}</h3>
+      <div className="p-4 bg-gradient-to-r from-[#2f3136] to-[#36393f] rounded-lg mb-4 border border-[#202225]">
+        <h3 className="text-lg font-bold text-white mb-4 capitalize">{name}</h3>
         <div className="space-y-4">
           {Object.entries(schema.properties).map(([propName, propSchema]) => (
             <FormSection
@@ -107,19 +116,21 @@ const FormSection = memo(function FormSection({
   if (schema.type === 'array' && schema.items) {
     const arrayValue = value || [];
     return (
-      <div className="p-4 border border-[#202225] rounded-md mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold text-gray-200 capitalize">{name}</h3>
-          <button
-            type="button"
-            onClick={() => {
-              const newValue = [...arrayValue, schema.items?.type === 'object' ? {} : ''];
-              onChange(currentPath, newValue);
-            }}
-            className="px-3 py-1 bg-[#5865f2] text-white rounded-md text-sm hover:bg-[#4752c4] transition-colors"
-          >
-            Add {name}
-          </button>
+      <div className="p-4 bg-gradient-to-r from-[#2f3136] to-[#36393f] rounded-lg mb-4 border border-[#202225] transition-all duration-200 hover:shadow-lg hover:border-[#5865f2]/20">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-white capitalize">{name}</h3>
+          <Tooltip content={`Add new ${name}`}>
+            <button
+              type="button"
+              onClick={() => {
+                const newValue = [...arrayValue, schema.items?.type === 'object' ? {} : ''];
+                onChange(currentPath, newValue);
+              }}
+              className="p-2 bg-[#202225] text-gray-300 hover:text-white rounded-md hover:bg-[#36393f] transition-all group hover:scale-105 active:scale-95"
+            >
+              <Plus size={16} className="group-hover:text-[#5865f2] transition-colors" />
+            </button>
+          </Tooltip>
         </div>
         <DndContext
           sensors={sensors}
@@ -127,51 +138,54 @@ const FormSection = memo(function FormSection({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={arrayValue.map((_: unknown, index: number) => `${currentPath}-${index}`)}
+            items={arrayValue.map((_, index) => `${currentPath}-${index}`)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="space-y-4">
+            <div className="space-y-3">
               {arrayValue.map((item: unknown, index: number) => (
                 <SortableItem key={`${currentPath}-${index}`} id={`${currentPath}-${index}`}>
-                  <div className="flex-1 relative pl-4 border-l-2 border-[#202225]">
-                    {schema.items?.type === 'object' && schema.items.properties ? (
-                      <div className="space-y-4">
-                        {Object.entries(schema.items.properties).map(([propName, propSchema]) => (
-                          <FormSection
-                            key={propName}
-                            name={propName}
-                            schema={propSchema as SchemaProperty}
-                            path={`${currentPath}.${index}`}
-                            value={item?.[propName as keyof typeof item]}
-                            onChange={onChange}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          className="flex-1 bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
-                          value={item as string || ''}
-                          onChange={(e) => {
-                            const newValue = [...arrayValue];
-                            newValue[index] = e.target.value;
-                            onChange(currentPath, newValue);
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newValue = arrayValue.filter((_: unknown, i: number) => i !== index);
-                            onChange(currentPath, newValue);
-                          }}
-                          className="text-red-500 hover:text-red-400 transition-colors"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    )}
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-gray-300 font-medium">{name} #{index + 1}</span>
+                    <Tooltip content="Remove item">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newValue = arrayValue.filter((_: unknown, i: number) => i !== index);
+                          onChange(currentPath, newValue);
+                        }}
+                        className="ml-auto p-1 text-gray-400 hover:text-red-400 rounded transition-all hover:scale-110 active:scale-95"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </Tooltip>
                   </div>
+                  {schema.items?.type === 'object' && schema.items.properties ? (
+                    <div className="space-y-4 mt-4">
+                      {Object.entries(schema.items.properties).map(([propName, propSchema]) => (
+                        <FormSection
+                          key={propName}
+                          name={propName}
+                          schema={propSchema as SchemaProperty}
+                          path={`${currentPath}.${index}`}
+                          value={item?.[propName as keyof typeof item]}
+                          onChange={onChange}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="mt-4">
+                      <input
+                        type="text"
+                        className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
+                        value={item as string || ''}
+                        onChange={(e) => {
+                          const newValue = [...arrayValue];
+                          newValue[index] = e.target.value;
+                          onChange(currentPath, newValue);
+                        }}
+                      />
+                    </div>
+                  )}
                 </SortableItem>
               ))}
             </div>
@@ -183,43 +197,27 @@ const FormSection = memo(function FormSection({
 
   // Handle primitive types
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-300 mb-1">
+    <div className="mb-4 group">
+      <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-[#5865f2]">
         <span className="capitalize">{name}</span>
         {schema.description && (
-          <span className="text-gray-400 text-xs ml-2">({schema.description})</span>
+          <span className="text-gray-400 text-xs ml-2 transition-colors group-focus-within:text-[#5865f2]/70">
+            ({schema.description})
+          </span>
         )}
       </label>
-      {schema.type === 'string' && schema.format === 'uri' ? (
-        <input
-          type="url"
-          className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
-          value={value || ''}
-          onChange={handleChange}
-        />
-      ) : schema.type === 'string' && schema.format === 'email' ? (
-        <input
-          type="email"
-          className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
-          value={value || ''}
-          onChange={handleChange}
-        />
-      ) : schema.type === 'string' && schema.pattern?.includes('date') ? (
-        <input
-          type="date"
-          className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
-          value={value || ''}
-          onChange={handleChange}
-        />
-      ) : (
-        <input
-          type="text"
-          className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2]"
-          value={value || ''}
-          onChange={handleChange}
-          pattern={schema.pattern}
-        />
-      )}
+      <input
+        type={
+          schema.type === 'string' && schema.format === 'uri' ? 'url' :
+          schema.type === 'string' && schema.format === 'email' ? 'email' :
+          schema.type === 'string' && schema.pattern?.includes('date') ? 'date' :
+          'text'
+        }
+        className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
+        value={value || ''}
+        onChange={handleChange}
+        pattern={schema.pattern}
+      />
     </div>
   );
 });

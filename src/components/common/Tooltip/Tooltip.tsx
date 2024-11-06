@@ -1,66 +1,54 @@
 'use client';
 
-import { FC, ReactNode, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 interface TooltipProps {
   content: string;
-  children: ReactNode;
-  position?: 'top' | 'bottom' | 'left' | 'right';
+  children: React.ReactNode;
   delay?: number;
+  position?: 'top' | 'right' | 'bottom' | 'left';
 }
 
-export const Tooltip: FC<TooltipProps> = ({ 
-  content, 
-  children, 
-  position = 'left',
-  delay = 300 
-}) => {
+const Tooltip = ({ content, children, delay = 300, position = 'bottom' }: TooltipProps) => {
   const [isVisible, setIsVisible] = useState(false);
-  let timeout: NodeJS.Timeout;
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
-  const showTip = () => {
-    timeout = setTimeout(() => {
-      setIsVisible(true);
-    }, delay);
+  const handleMouseEnter = () => {
+    const id = setTimeout(() => setIsVisible(true), delay);
+    setTimeoutId(id);
   };
 
-  const hideTip = () => {
-    clearTimeout(timeout);
+  const handleMouseLeave = () => {
+    if (timeoutId) clearTimeout(timeoutId);
     setIsVisible(false);
+  };
+
+  const getPositionClasses = () => {
+    switch (position) {
+      case 'top':
+        return '-top-8 left-1/2 -translate-x-1/2';
+      case 'right':
+        return 'top-1/2 -translate-y-1/2 left-full ml-2';
+      case 'bottom':
+        return '-bottom-8 left-1/2 -translate-x-1/2';
+      case 'left':
+        return 'top-1/2 -translate-y-1/2 right-full mr-2';
+      default:
+        return '-bottom-8 left-1/2 -translate-x-1/2';
+    }
   };
 
   return (
     <div 
       className="relative inline-block"
-      onMouseEnter={showTip}
-      onMouseLeave={hideTip}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {children}
       {isVisible && (
-        <div
-          className={cn(
-            "absolute z-50 px-2 py-1 text-xs bg-black rounded shadow-lg whitespace-nowrap animate-fade-in",
-            "before:content-[''] before:absolute before:border-4 before:border-transparent",
-            position === 'top' && [
-              "bottom-full left-1/2 -translate-x-1/2 mb-2",
-              "before:top-full before:left-1/2 before:-translate-x-1/2 before:border-t-black"
-            ],
-            position === 'bottom' && [
-              "top-full left-1/2 -translate-x-1/2 mt-2",
-              "before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-b-black"
-            ],
-            position === 'left' && [
-              "right-full top-1/2 -translate-y-1/2 mr-2",
-              "before:left-full before:top-1/2 before:-translate-y-1/2 before:border-l-black"
-            ],
-            position === 'right' && [
-              "left-full top-1/2 -translate-y-1/2 ml-2",
-              "before:right-full before:top-1/2 before:-translate-y-1/2 before:border-r-black"
-            ]
-          )}
-        >
+        <div className={`absolute z-50 px-2 py-1 text-xs font-medium text-white bg-black rounded shadow-lg whitespace-nowrap ${getPositionClasses()}`}>
           {content}
+          <div className="absolute w-2 h-2 bg-black transform rotate-45 -translate-x-1/2 -top-1 left-1/2" />
         </div>
       )}
     </div>

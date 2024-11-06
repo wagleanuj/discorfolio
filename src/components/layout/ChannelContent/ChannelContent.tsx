@@ -6,7 +6,7 @@ import { Users } from 'lucide-react';
 import { useUi } from '@/contexts/UiContext';
 import MemberList from '@/components/layout/MemberList/MemberList';
 import { cn } from '@/lib/utils';
-import { Tooltip } from '@/components/common/Tooltip/Tooltip';
+import Tooltip from '@/components/common/Tooltip/Tooltip';
 import ChatInput from '@/components/common/ChatInput';
 import { useChat } from '@/contexts/ChatContext';
 

@@ -21,28 +21,7 @@ export default function Preview({ data }: PreviewProps) {
     return (
         <div className="flex flex-col h-full">
             {/* View Toggle */}
-            <div className="flex items-center justify-end gap-2 p-2 bg-[#2f3136] border-b border-[#202225]">
-                <button
-                    onClick={() => setViewMode('desktop')}
-                    className={`p-2 rounded ${viewMode === 'desktop'
-                            ? 'bg-[#5865f2] text-white'
-                            : 'text-gray-400 hover:text-white'
-                        }`}
-                    title="Desktop view"
-                >
-                    <Monitor size={20} />
-                </button>
-                <button
-                    onClick={() => setViewMode('mobile')}
-                    className={`p-2 rounded ${viewMode === 'mobile'
-                            ? 'bg-[#5865f2] text-white'
-                            : 'text-gray-400 hover:text-white'
-                        }`}
-                    title="Mobile view"
-                >
-                    <Smartphone size={20} />
-                </button>
-            </div>
+           
 
             {/* Preview Container */}
             <div className="flex-1 overflow-hidden bg-[#36393f] p-4">

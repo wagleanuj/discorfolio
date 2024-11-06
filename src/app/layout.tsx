@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const resume = await loadResume();
   
   return {
-    title: `${resume.basics.name} | Discordfolio`,
+    title: `${resume.basics.name} | Discorfolio`,
     description: `${resume.basics.name}'s portfolio - ${resume.basics.label}`,
   };
 }
