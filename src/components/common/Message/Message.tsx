@@ -15,45 +15,6 @@ export interface MessageProps {
   role?: 'user' | 'assistant' | 'system';
 }
 
-const MarkdownComponents: Partial<Components> = {
-  h1: ({ children }) => (
-    <h1 className="text-xl font-bold mt-2 mb-1">{children}</h1>
-  ),
-  h2: ({ children }) => (
-    <h2 className="text-lg font-bold mt-2 mb-1">{children}</h2>
-  ),
-  h3: ({ children }) => (
-    <h3 className="text-md font-bold mt-2 mb-1">{children}</h3>
-  ),
-  p: ({ children }) => (
-    <p className="mb-2">{children}</p>
-  ),
-  ul: ({ children }) => (
-    <ul className="list-disc ml-4 mb-2">{children}</ul>
-  ),
-  li: ({ children }) => (
-    <li className="mb-1">{children}</li>
-  ),
-  a: ({ href, children }) => (
-    <a
-      href={href}
-      className="text-[#00b0f4] hover:underline"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {children}
-    </a>
-  ),
-  strong: ({ children }) => (
-    <strong className="font-bold">{children}</strong>
-  ),
-  em: ({ children }) => (
-    <em className="italic">{children}</em>
-  ),
-  code: ({ children }) => (
-    <code className="bg-[#2f3136] px-1 py-0.5 rounded text-sm">{children}</code>
-  ),
-};
 
 export default function Message({ author, content, timestamp, isMobile = false }: MessageProps) {
   const color = author.bot ? getBotColor(author.name) : getAvatarColor(author.name);

@@ -88,8 +88,20 @@ const FormSection = memo(function FormSection({
     }
   }, [value, currentPath, onChange]);
 
+  // Helper to determine if field should use textarea
+  const shouldUseTextarea = (name: string, path: string) => {
+    // Check both the field name and the full path
+    const textareaFields = ['summary', 'description'];
+    const textareaPatterns = ['highlights', 'summary'];
+    
+    return textareaFields.includes(name) || 
+           textareaPatterns.some(pattern => path.includes(pattern));
+  };
+
   // Handle primitive types
   if (!schema.type || (!schema.properties && !schema.items)) {
+    const isTextarea = shouldUseTextarea(name, path);
+
     return (
       <div className="mb-4">
         <label className="block mb-2">
@@ -100,18 +112,28 @@ const FormSection = memo(function FormSection({
             </span>
           )}
         </label>
-        <input
-          type={
-            schema.type === 'string' && schema.format === 'uri' ? 'url' :
-            schema.type === 'string' && schema.format === 'email' ? 'email' :
-            schema.type === 'string' && schema.pattern?.includes('date') ? 'date' :
-            'text'
-          }
-          className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
-          value={value || ''}
-          onChange={handleChange}
-          pattern={schema.pattern}
-        />
+        {isTextarea ? (
+          <textarea
+            className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20 min-h-[120px] resize-y"
+            value={value || ''}
+            onChange={(e) => onChange(currentPath, e.target.value)}
+            placeholder={`Enter ${name}...`}
+          />
+        ) : (
+          <input
+            type={
+              schema.type === 'string' && schema.format === 'uri' ? 'url' :
+              schema.type === 'string' && schema.format === 'email' ? 'email' :
+              schema.type === 'string' && schema.pattern?.includes('date') ? 'date' :
+              'text'
+            }
+            className="w-full bg-[#40444b] text-gray-200 rounded-md px-3 py-2 border border-[#202225] focus:outline-none focus:border-[#5865f2] transition-all hover:border-[#5865f2]/50 focus:ring-2 focus:ring-[#5865f2]/20"
+            value={value || ''}
+            onChange={handleChange}
+            pattern={schema.pattern}
+            placeholder={`Enter ${name}...`}
+          />
+        )}
       </div>
     );
   }
