@@ -1,4 +1,4 @@
-# Discordfolio 🎮
+# Discorfolio 🎮
 
 A Discord-inspired portfolio website that turns your resume into an interactive chat experience. Built with Next.js, TypeScript, and Tailwind CSS.
 

@@ -32,7 +32,7 @@ export default function Toolbar({
       {/* Title */}
       <div className="flex-shrink-0">
         <h1 className="text-white font-bold text-lg tracking-tight">
-          Discordfolio <span className="text-[#5865f2]">Builder</span>
+          Discorfolio <span className="text-[#5865f2]">Builder</span>
         </h1>
       </div>
 
