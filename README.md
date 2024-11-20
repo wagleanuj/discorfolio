@@ -34,12 +34,14 @@ npm install
 
 3. Create a `.env` file based on `.env.example`:
 ```env
-# LLM Provider Configuration
-LLM_PROVIDER=openai  # or 'ollama'
-
-# OpenAI Configuration
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4-turbo-preview
+VERCEL_RESUME_BLOB_URL=  // production var
+BLOB_READ_WRITE_TOKEN= // production var
+OPENAI_API_KEY=
+OPENAI_BASE_URL=
+OPENAI_MODEL=
+OPENAI_MAX_TOKENS=1000
+OPENAI_TEMPERATURE=0.7
+```
 
 # Other configurations...
 ```
