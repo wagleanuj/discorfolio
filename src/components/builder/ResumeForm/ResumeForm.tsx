@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { FormData } from './types';
-import { resumeSchema } from '@/lib/schema/resume.schema';
+import { extendedResumeSchema } from '@/lib/schema/extended-resume.schema';
 import FormSection from './FormSection';
 import { Download, Upload } from 'lucide-react';
 import { Resume } from '@/types/resume';
@@ -43,7 +43,7 @@ const ResumeForm = ({ initialData, onDataChange }: ResumeFormProps) => {
   return (
     <div className="w-full transition-all duration-300 ease-in-out">
       <form className="space-y-6">
-        {Object.entries(resumeSchema.properties).map(([name, schema]) => (
+        {Object.entries(extendedResumeSchema.properties).map(([name, schema]) => (
           <FormSection
             key={name}
             name={name}

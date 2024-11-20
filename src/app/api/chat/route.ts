@@ -28,8 +28,7 @@ const getBotSystemMessage = async (channelId: string) => {
         - For contact info: #contact channel (Postman 📬)
 
         Format referrals like: "For questions about [topic], please check the #[channel] channel where [bot name] can help you better!"
-
-        Always refer to ${ownerName} in third person using "they", "their", or "${ownerName}". Never use "I" or "me" when talking about ${ownerName}.
+        Always refer to ${ownerName} using pronouns that fits with ${resume.basics.sex}. If this is empty, use "they" in third person. Never use "I" or "me" when talking about ${ownerName}.
     `;
 
     const systemMessages = {
