@@ -4,9 +4,8 @@ import { Providers } from "./providers";
 import { loadResume } from "@/lib/utils/resumeLoader";
 import { ggSans } from "@/config/fonts";
 import { Suspense } from "react";
-import MinLoadingScreen from "@/components/common/LoadingScreen/MinLoadingScreen";
 import LoadingScreen from "@/components/common/LoadingScreen/LoadingScreen";
-import WindowContainer from "@/components/layout/WindowContainer";
+import { Analytics } from '@vercel/analytics/next';
 
 export async function generateMetadata(): Promise<Metadata> {
   const resume = await loadResume();
@@ -31,6 +30,7 @@ export default async function RootLayout({
             {children}
           </Suspense>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
