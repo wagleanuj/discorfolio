@@ -26,7 +26,7 @@ interface Basics {
   phone: string;
   summary: string;
   url?: string;
-  sex?: string;
+  pronouns?: string;
   location: {
     address: string;
     postalCode: string;

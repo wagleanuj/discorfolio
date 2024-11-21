@@ -8,9 +8,9 @@ export const extendedResumeSchema = {
             "type": "object",
             "properties": {
                 ...resumeSchema.properties.basics.properties,
-                "sex": {
+                "pronouns": {
                     "type": "string",
-                    "description": "Your sex"
+                    "description": "Your pronouns"
                 },
             }
         }

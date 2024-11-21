@@ -1,14 +1,15 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai';
-import OpenAI from 'openai';
+import { streamText } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { getBotByChannel } from '@/config/bots';
 import { Resume } from '@/types/resume';
 import { loadResume } from '@/lib/utils/resumeLoader';
 
 // Create OpenAI instance
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+const openai = createOpenAI({
     baseURL: process.env.OPENAI_BASE_URL,
-});
+    apiKey: process.env.OPENAI_API_KEY,
+})
+
 
 // Bot system messages with context
 const getBotSystemMessage = async (channelId: string) => {
@@ -28,7 +29,7 @@ const getBotSystemMessage = async (channelId: string) => {
         - For contact info: #contact channel (Postman 📬)
 
         Format referrals like: "For questions about [topic], please check the #[channel] channel where [bot name] can help you better!"
-        Always refer to ${ownerName} using pronouns that fits with ${resume.basics.sex}. If this is empty, use "they" in third person. Never use "I" or "me" when talking about ${ownerName}.
+        ${ownerName}'s pronouns are ${resume.basics.pronouns || "they/them"}. Use the appropriate pronouns for ${ownerName}. Never use "I" or "me" when talking about ${ownerName}.
     `;
 
     const systemMessages = {
@@ -92,24 +93,23 @@ export async function POST(req: Request) {
         if (!systemMessage) {
             return new Response('Invalid channel', { status: 400 });
         }
-
-        // Create the stream with system message
-        const response = await openai.chat.completions.create({
-            model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
+        // Convert the response into a friendly stream
+        const r = streamText({
+            model: openai.chat(process.env.OPENAI_MODEL || 'gpt-4-turbo-preview'),
             messages: [
                 { role: 'system', content: systemMessage },
                 ...messages
             ],
             temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.7'),
-            max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS || '1000'),
-            stream: true,
+            maxTokens: parseInt(process.env.OPENAI_MAX_TOKENS || '1000'),
+        });
+        // Respond with the stream
+        return r.toTextStreamResponse({
+            headers: {
+                'Content-Type': 'text/event-stream',
+            },
         });
 
-        // Convert the response into a friendly stream
-        const stream = OpenAIStream(response);
-
-        // Return a StreamingTextResponse, which can be consumed by the client
-        return new StreamingTextResponse(stream);
     } catch (error) {
         console.error('Chat API Error:', error);
         return new Response('Error processing chat request', { status: 500 });
